@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.5.0/chart.js" integrity="sha512-y5GdcvG8/LoqZllcaDnZKY4hKSDowG4vWAytStZ1AZ8sxgWke7KtkMx3G9KQU0Ih3kIDfY/3EO1sSyKGRxqwJQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <div class="container">
+        <div class="sidebar">
+            <!-- LOGO -->
+            <div class="logo">
+                <h1>AGRI-TOGO</h1>
+                <p>Plateforme de gestion agricole</p>
+            </div>
+            <!-- Menu -->
+            <div class="accueil">
+               <nav>
+                    <ul>
+                        <p>Menu Principal</p>
+                        <li><a href="#"> <i class="fa-solid fa-house"></i>Tableau de board</a></li>
+                        <li><a href="#"><i class="fa-solid fa-circle-user"></i>Agriculteur</a></li>
+                        <li> <a href="#"><i class="fa-solid fa-road-spikes"></i>Parcelles</a></li>
+                        <li><a href="#"><i class="fa-solid fa-seedling"></i>Cultures</a></li>
+                        <li><a href="#"><i class="fa-solid fa-dumpster"></i>Intrants</a></li>
+                        <li><a href="#"><i class="fa-solid fa-wheat-awn"></i>Récoltes</a></li>
+                        <li><a href="#"><i class="fa-solid fa-wind"></i>Saisons</a></li>
+                        <li><a href="#"><i class="fa-solid fa-location-dot"></i> Zones Agroécologiques</a></li>
+                        <li><a href="#"> <i class="fa-solid fa-globe"></i>Coopératives</a></li>
+                        <li><a href="#"><i class="fa-solid fa-users"></i>Utilisateurs</a></li>
+                        <li><a href="#"><i class="fa-solid fa-book"></i> Rapports</a></li>
+                    </ul>
+
+                    <ul>
+                        <p >Paramètres</p>
+                        <li class="para">
+                            <a href="#"> <i class="fa-solid fa-gear"></i>Paramètres</a>
+                        </li>
+                    </ul>
+
+                    <ul>
+                        
+                        <li class="para">
+                            <a href="#"> <i class="fa-solid fa-right-from-bracket"></i>Déconnexion</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+
+
+
+        <div class="topbar">
+            <div class="icon">
+            <i class="fa-solid fa-bars-staggered"></i>
+            <i class="fa-solid fa-bell" id="bells"></i>
+            </div>
+
+            <div class="profil">
+
+            </div>
+        </div>
+
+        <div class="contenu">
+            <h3>Tableau de board</h3>
+
+            <div class="cards">
+                <div class="card">
+                    <div class="card-content">
+                        <h3>126</h3>
+                        <p>Agriculteur</p>
+                        <i class="fa-solid fa-user"></i>
+                        <p><span>+12 ce mois</span></p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-content">
+                        <h3>256</h3>
+                        <p>Parcelles</p>
+                        <i class="fa-solid fa-road-spikes"></i>
+                        <p><span>+18 ce mois</span></p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-content">
+                        <h3>26</h3>
+                        <p>cultures en cours</p>
+                        <i class="fa-solid fa-seedling"></i>
+                        <p><span>+5 ce mois</span></p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-content">
+                        <h3>12</h3>
+                        <p>Intrants utilisés</p>
+                        <i class="fa-solid fa-dumpster"></i>
+                        <p><span>+7 ce mois</span></p>
+                    </div>
+                </div>
+                 <div class="card">
+                    <div class="card-content">
+                        <h3>152</h3>
+                        <p>Récoltes enregistrées</p>
+                        <i class="fa-solid fa-dumpster"></i>
+                        <p><span>+20 ce mois</span></p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="charto">
+                <canvas id="myChart"></canvas>
+                <!-- <canvas id="monDonut"></canvas> -->
+            </div>
+           
+            <script src="myChart.js"></script>
+            <script src="chart.js"></script>
+        </div>
+
+        
+    </div>
+    
+</body>
+</html>
