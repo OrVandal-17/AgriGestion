@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>AgriGestion — Testeur d'API</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: system-ui, Arial, sans-serif;
+    margin: 0;
+    background: #f5f5f5;
+    color: #222;
+  }
+  header {
+    background: #2f5d3a;
+    color: #fff;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  header h1 { font-size: 16px; margin: 0; margin-right: auto; }
+  header input {
+    padding: 5px 7px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    font-size: 13px;
+  }
+  #baseUrl { width: 260px; }
+  #tokenDisplay { width: 220px; }
+  .layout { display: flex; height: calc(100vh - 46px); }
+  nav {
+    width: 260px;
+    overflow-y: auto;
+    background: #fff;
+    border-right: 1px solid #ddd;
+    padding: 8px;
+  }
+  nav h2 {
+    font-size: 12px;
+    text-transform: uppercase;
+    color: #888;
+    margin: 14px 0 4px;
+  }
+  nav h2:first-child { margin-top: 0; }
+  .route-btn {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    padding: 5px 6px;
+    font-size: 12.5px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: monospace;
+  }
+  .route-btn:hover { background: #eef4ee; }
+  .method { font-weight: bold; margin-right: 6px; }
+  .m-GET { color: #1a7f37; }
+  .m-POST { color: #9a6700; }
+  .m-PUT { color: #0969da; }
+  .m-DELETE { color: #cf222e; }
+  main {
+    flex: 1;
+    padding: 14px 18px;
+    overflow-y: auto;
+  }
+  .row { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; }
+  select, input[type=text] {
+    padding: 6px 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 13px;
+    font-family: monospace;
+  }
+  #path { flex: 1; }
+  textarea {
+    width: 100%;
+    height: 130px;
+    font-family: monospace;
+    font-size: 13px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  button.send {
+    background: #2f5d3a;
+    color: #fff;
+    border: none;
+    padding: 7px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+  }
+  button.send:hover { background: #244a2d; }
+  #status {
+    font-family: monospace;
+    font-size: 13px;
+    margin: 10px 0 4px;
+  }
+  .ok { color: #1a7f37; }
+  .fail { color: #cf222e; }
+  pre#response {
+    background: #1e1e1e;
+    color: #d4d4d4;
+    padding: 12px;
+    border-radius: 4px;
+    font-size: 12.5px;
+    overflow: auto;
+    max-height: 55vh;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  label.small { font-size: 12px; color: #666; display: block; margin-bottom: 3px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>AgriGestion — Testeur d'API</h1>
+  <input id="baseUrl" type="text" value="http://localhost/AgriGestion/public" placeholder="URL de base">
+  <input id="tokenDisplay" type="text" placeholder="Token JWT (rempli apres login)">
+</header>
+
+<div class="layout">
+  <nav id="nav"></nav>
+
+  <main>
+    <div class="row">
+      <label class="small" style="width:0"></label>
+      <select id="method">
+        <option>GET</option>
+        <option>POST</option>
+        <option>PUT</option>
+        <option>DELETE</option>
+      </select>
+      <input id="path" type="text" value="/auth/login" placeholder="/chemin/de/la/route">
+      <button class="send" onclick="sendRequest()">Envoyer</button>
+    </div>
+
+    <label class="small">Corps de la requete (JSON, ignore pour GET/DELETE)</label>
+    <textarea id="body">{
+  "email": "admin@agrigestion.tg",
+  "mot_de_passe": "changeme"
+}</textarea>
+
+    <div id="status"></div>
+    <pre id="response">La reponse s'affichera ici.</pre>
+  </main>
+</div>
+
+<script>
+// Routes organisees par section, avec un corps d'exemple pre-rempli.
+const ROUTES = {
+  "Authentification": [
+    ["POST", "/auth/login", {email:"admin@agrigestion.tg", mot_de_passe:"changeme"}],
+    ["GET", "/auth/me", null],
+  ],
+  "Admin - Utilisateurs": [
+    ["GET", "/utilisateurs", null],
+    ["POST", "/utilisateurs", {Nom_util:"Kodjo", Prenom_util:"Ama", Email_util:"ama@ex.tg", MotPasse_util:"secret123", Role_util:"Agriculteur", Id_coop:1}],
+    ["GET", "/utilisateurs/1", null],
+    ["PUT", "/utilisateurs/1", {Nom_util:"Kodjo"}],
+    ["DELETE", "/utilisateurs/1", null],
+  ],
+  "Admin - Cooperatives": [
+    ["GET", "/cooperatives", null],
+    ["POST", "/cooperatives", {Nom_coop:"Coop du Plateau", Adresse_coop:"Kpalime", Telephone_coop:"90000000", Email_coop:"coop@ex.tg"}],
+    ["PUT", "/cooperatives/1", {Nom_coop:"Coop modifiee"}],
+    ["DELETE", "/cooperatives/1", null],
+  ],
+  "Admin - Agriculteurs": [
+    ["GET", "/agriculteurs", null],
+    ["POST", "/agriculteurs", {Nom_agri:"Amegan", Prenom_agri:"Koffi", Sexe:"M", Id_coop:1, Id_util:2}],
+    ["PUT", "/agriculteurs/1", {Telephone:"91112233"}],
+    ["DELETE", "/agriculteurs/1", null],
+  ],
+  "Admin - Parcelles": [
+    ["GET", "/parcelles", null],
+    ["POST", "/parcelles", {Superficie:1.5, Localisation:"Zone Nord", EtatParcelle:"Libre", Id_agri:1, Id_zone:1}],
+    ["PUT", "/parcelles/1", {EtatParcelle:"En culture"}],
+    ["DELETE", "/parcelles/1", null],
+  ],
+  "Admin - Referentiels": [
+    ["GET", "/zones", null],
+    ["POST", "/zones", {Nom_zone:"Zone soudanienne", Region:"Savanes"}],
+    ["GET", "/cultures", null],
+    ["POST", "/cultures", {Nom_culture:"Mais", Type_culture:"Cereale", DureeCycle:90}],
+    ["GET", "/intrants", null],
+    ["POST", "/intrants", {Nom_intrant:"Uree", Type_intrant:"Engrais", Unite:"kg", PrixUnitaire:350}],
+    ["GET", "/saisons", null],
+    ["POST", "/saisons", {Libelle:"Saison des pluies 2026", DateDebut:"2026-04-01", DateFin:"2026-09-30"}],
+  ],
+  "Agriculteur": [
+    ["GET", "/mes-parcelles", null],
+    ["GET", "/mises-en-culture", null],
+    ["POST", "/mises-en-culture", {Id_parcelle:1, Id_culture:1, Id_saison:1, DateMiseEnCulture:"2026-06-01"}],
+    ["GET", "/intrants-utilises", null],
+    ["POST", "/intrants-utilises", {Id_parcelle:1, Id_intrant:1, Quantite:10, DateUtilisation:"2026-06-05"}],
+    ["GET", "/recoltes", null],
+    ["POST", "/recoltes", {Id_parcelle:1, Id_culture:1, DateRecolte:"2026-09-15", Rendement:1200, Cout:45000}],
+  ],
+  "Responsable cooperative": [
+    ["GET", "/bilan-production", null],
+    ["GET", "/bilan-production?saison_id=1", null],
+    ["GET", "/agriculteurs-cooperative", null],
+  ],
+};
+
+const nav = document.getElementById('nav');
+for (const [section, routes] of Object.entries(ROUTES)) {
+  const h2 = document.createElement('h2');
+  h2.textContent = section;
+  nav.appendChild(h2);
+  routes.forEach(([method, path, body]) => {
+    const btn = document.createElement('button');
+    btn.className = 'route-btn';
+    btn.innerHTML = `<span class="method m-${method}">${method}</span>${path}`;
+    btn.onclick = () => fillForm(method, path, body);
+    nav.appendChild(btn);
+  });
+}
+
+function fillForm(method, path, body) {
+  document.getElementById('method').value = method;
+  document.getElementById('path').value = path;
+  document.getElementById('body').value = body ? JSON.stringify(body, null, 2) : '';
+}
+
+async function sendRequest() {
+  const base = document.getElementById('baseUrl').value.replace(/\/$/, '');
+  const method = document.getElementById('method').value;
+  const path = document.getElementById('path').value;
+  const token = document.getElementById('tokenDisplay').value.trim();
+  const bodyText = document.getElementById('body').value.trim();
+  const statusEl = document.getElementById('status');
+  const responseEl = document.getElementById('response');
+
+  const headers = { 'Content-Type': 'application/json' };
+  if (token) headers['Authorization'] = 'Bearer ' + token;
+
+  const options = { method, headers };
+  if (method !== 'GET' && method !== 'DELETE' && bodyText) {
+    options.body = bodyText;
+  }
+
+  statusEl.textContent = 'Envoi en cours...';
+  statusEl.className = '';
+
+  try {
+    const res = await fetch(base + path, options);
+    const text = await res.text();
+    let pretty = text;
+    let json = null;
+    try { json = JSON.parse(text); pretty = JSON.stringify(json, null, 2); } catch (e) {}
+
+    statusEl.textContent = `${res.status} ${res.statusText}`;
+    statusEl.className = res.ok ? 'ok' : 'fail';
+    responseEl.textContent = pretty;
+
+    // Auto-remplissage du token apres un login reussi
+    if (path.includes('/auth/login') && json && json.token) {
+      document.getElementById('tokenDisplay').value = json.token;
+    }
+  } catch (err) {
+    statusEl.textContent = 'Erreur reseau';
+    statusEl.className = 'fail';
+    responseEl.textContent = String(err) + '\n\nVerifiez l\'URL de base et que le CORS est autorise sur le serveur.';
+  }
+}
+</script>
+</body>
+</html>
