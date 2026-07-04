@@ -8,7 +8,7 @@ mises en culture, intrants, récoltes) — Togo.
 ## 1. Architecture
 
 ```
-AgriGestion/
+back/
 ├── config/            configuration (.env, connexion PDO)
 ├── database/           scripts SQL (schéma original + corrections)
 ├── docs/               diagramme UML corrigé (SVG)
@@ -35,20 +35,23 @@ l'en-tête `Authorization: Bearer <token>`. Le token contient `sub` (Id_util),
 
 ## 3. Installation
 
-### Prérequis
-- PHP ≥ 8.1 avec extensions `pdo_mysql`                           |
+### Prérequis                                                    
+- PHP ≥ 8.1 avec extensions `pdo_mysql`                           ]
 - MariaDB/MySQL ≥ 10.4                                            |> WAMPserver 
-- Apache avec `mod_rewrite` (ou Nginx équivalent — voir plus bas) |
+- Apache avec `mod_rewrite` (ou Nginx équivalent — voir plus bas) ]
 
 ### Étapes
 
 ```bash
-# 1. Copier le dossier AgriGestion sur le serveur / dans htdocs
+# 1. Cloner Le repository(de préférence dans le dossier wamp64/www/ (Le dossier ou est installé wampserver))
 
-# 2. Créer la base et importer le schéma
+git clone https://github.com/OrVandal-17/AgriGestion.git
+```
+
+```bash
+# 2. Créer la base et importer le schéma avec l'outil PhpMyAdmin de WAMP / la ligne de commande
 mysql -u root -p -e "CREATE DATABASE gestion_agricole_togo CHARACTER SET utf8mb4"
 mysql -u root -p gestion_agricole_togo < database/gestion_agricole_togo.sql
-mysql -u root -p gestion_agricole_togo < database/002_corrections.sql
 
 # 3. Configurer l'environnement
 cp .env.example .env
@@ -56,35 +59,20 @@ cp .env.example .env
 
 # 4. Pointer le vhost / DocumentRoot vers AgriGestion/public
 ```
-
-### Nginx (alternative à .htaccess)
-
-```nginx
-location / {
-    try_files $uri /index.php?$query_string;
-}
-```
-
-### Créer le premier compte Administrateur
-
-Aucune interface d'inscription publique n'est exposée (choix volontaire :
-seul un Administrateur crée des comptes). Insérer le premier compte
-directement en base :
-
-```sql
-INSERT INTO utilisateur (Nom_util, Prenom_util, Email_util, MotPasse_util, Role_util)
-VALUES ('Admin', 'Système', 'admin@agrigestion.tg',
-        '$2y$10$REMPLACER_PAR_UN_HASH_BCRYPT', 'Administrateur');
-```
-
-Générer le hash bcrypt en PHP : `password_hash('votre_mot_de_passe', PASSWORD_BCRYPT)`.
-
 ---
 
 ## 4. Utilisation / Routes de l'API
 
 Base URL : `http://<votre-domaine>/` (le front-controller est dans `public/`).
 Toutes les réponses sont en JSON.
+
+### Utiliser Le compte admin par défaut pour se connecter et effectuer des modifications
+
+-- Compte Administrateur initial
+-- Email    : admin@agrigestion.tg
+-- Mot de passe : Admin@2026
+
+---
 
 ### Authentification
 
