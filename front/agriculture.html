@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Agriculteurs — AGRI-TOGO</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+      integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+  </head>
+  <body>
+    <div class="sidebar">
+      <div class="logo">
+        <h1>AGRI-TOGO</h1>
+        <p>Plateforme de gestion agricole</p>
+      </div>
+      <div class="accueil">
+        <nav>
+          <ul>
+            <p>Menu Principal</p>
+            <li><a href="index.html"><i class="fa-solid fa-house"></i>Tableau de bord</a></li>
+            <li><a href="agriculture.html"><i class="fa-solid fa-circle-user"></i>Agriculteurs</a></li>
+            <li><a href="gestionparcelles.html"><i class="fa-solid fa-road-spikes"></i>Parcelles</a></li>
+            <li><a href="cultures.html"><i class="fa-solid fa-seedling"></i>Cultures</a></li>
+            <li><a href="intrants.html"><i class="fa-solid fa-dumpster"></i>Intrants</a></li>
+            <li><a href="recolte.html"><i class="fa-solid fa-wheat-awn"></i>Récoltes</a></li>
+            <li><a href="saisons.html"><i class="fa-solid fa-wind"></i>Saisons</a></li>
+            <li><a href="zones.html"><i class="fa-solid fa-location-dot"></i>Zones Agroécologiques</a></li>
+            <li><a href="cooperatives.html"><i class="fa-solid fa-globe"></i>Coopératives</a></li>
+            <li><a href="utilisateurs.html"><i class="fa-solid fa-users"></i>Utilisateurs</a></li>
+            <li><a href="rapport.html"><i class="fa-solid fa-book"></i>Rapports</a></li>
+          </ul>
+          <ul>
+            <p>Paramètres</p>
+            <li class="para"><a href="parametres.html"><i class="fa-solid fa-gear"></i>Paramètres</a></li>
+          </ul>
+          <ul>
+            <li class="para"><a href="#"><i class="fa-solid fa-right-from-bracket"></i>Déconnexion</a></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+    <div class="sidebar-backdrop"></div>
+    <div class="topbar">
+      <div class="icon">
+        <i class="fa-solid fa-bars-staggered" id="menuToggle"></i>
+        <i class="fa-solid fa-bell" id="bells"></i>
+      </div>
+      <div class="profil"></div>
+    </div>
+    <section class="page" id="agriculteurs">
+      <div class="page-head">
+        <div>
+          <div class="eyebrow">Exploitation · 128 agriculteurs enregistrés</div>
+          <h2>Gestion des agriculteurs</h2>
+          <p>Consultez, recherchez et gérez les agriculteurs rattachés aux coopératives.</p>
+        </div>
+        <a href="ajoutAgriculteur.html" class="btn btn-primary"><i class="fa-solid fa-plus"></i>Ajouter un agriculteur</a>
+      </div>
+
+      <div class="cardy">
+        <div class="toolbar">
+          <div class="toolbar-left">
+            <div class="search-box">
+              <input type="text" placeholder="Rechercher un agriculteur..." />
+            </div>
+            <div class="filter-chip">Coopérative</div>
+            <div class="filter-chip">Sexe</div>
+            <div class="filter-chip">Statut</div>
+          </div>
+          <button class="btn btn-ghost">Exporter</button>
+        </div>
+        <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Agriculteur</th><th>Sexe</th><th>Téléphone</th><th>Coopérative</th><th>Parcelles</th><th>Statut</th><th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <div class="cell-name">
+                  <div class="avatar-sq">AK</div>
+                  <div>Ayélé Kponou<div class="sub">Né(e) le 14/03/1985</div></div>
+                </div>
+              </td>
+              <td>Féminin</td>
+              <td>+228 90 12 34 56</td>
+              <td>Coop. Agricole de Kara</td>
+              <td>3</td>
+              <td><span class="badge badge-green">Actif</span></td>
+              <td>
+                <div class="row-actions">
+                  <button class="action-btn" title="Voir"><i class="fa-solid fa-eye"></i></button>
+                  <button class="action-btn" title="Modifier"><i class="fa-solid fa-pen"></i></button>
+                  <button class="action-btn danger" title="Supprimer"><i class="fa-solid fa-trash"></i></button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div class="cell-name">
+                  <div class="avatar-sq">KM</div>
+                  <div>Kossi Mensah<div class="sub">Né(e) le 02/11/1978</div></div>
+                </div>
+              </td>
+              <td>Masculin</td>
+              <td>+228 91 22 87 03</td>
+              <td>Coop. de Sokodé</td>
+              <td>5</td>
+              <td><span class="badge badge-green">Actif</span></td>
+              <td>
+                <div class="row-actions">
+                  <button class="action-btn" title="Voir"><i class="fa-solid fa-eye"></i></button>
+                  <button class="action-btn" title="Modifier"><i class="fa-solid fa-pen"></i></button>
+                  <button class="action-btn danger" title="Supprimer"><i class="fa-solid fa-trash"></i></button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div class="cell-name">
+                  <div class="avatar-sq">EA</div>
+                  <div>Essowavana Atakpa<div class="sub">Né(e) le 27/06/1990</div></div>
+                </div>
+              </td>
+              <td>Masculin</td>
+              <td>+228 93 44 19 20</td>
+              <td>Coop. Agricole de Kara</td>
+              <td>2</td>
+              <td><span class="badge badge-gray">Inactif</span></td>
+              <td>
+                <div class="row-actions">
+                  <button class="action-btn" title="Voir"><i class="fa-solid fa-eye"></i></button>
+                  <button class="action-btn" title="Modifier"><i class="fa-solid fa-pen"></i></button>
+                  <button class="action-btn danger" title="Supprimer"><i class="fa-solid fa-trash"></i></button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div class="cell-name">
+                  <div class="avatar-sq">DB</div>
+                  <div>Djidjoho Bakary<div class="sub">Né(e) le 09/09/1982</div></div>
+                </div>
+              </td>
+              <td>Masculin</td>
+              <td>+228 96 77 41 55</td>
+              <td>Coop. de Tsévié</td>
+              <td>4</td>
+              <td><span class="badge badge-green">Actif</span></td>
+              <td>
+                <div class="row-actions">
+                  <button class="action-btn" title="Voir"><i class="fa-solid fa-eye"></i></button>
+                  <button class="action-btn" title="Modifier"><i class="fa-solid fa-pen"></i></button>
+                  <button class="action-btn danger" title="Supprimer"><i class="fa-solid fa-trash"></i></button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        </div>
+        <div class="table-footer">
+          <span>Affichage 1–4 sur 128 agriculteurs</span>
+          <div class="pager"><button>‹</button><button class="active">1</button><button>2</button><button>3</button><button>›</button></div>
+        </div>
+      </div>
+    </section>
+    <script src="app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bilan & Rapports — AGRI-TOGO</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+      integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+  </head>
+  <body>
+    <div class="sidebar">
+      <div class="logo">
+        <h1>AGRI-TOGO</h1>
+        <p>Plateforme de gestion agricole</p>
+      </div>
+      <div class="accueil">
+        <nav>
+          <ul>
+            <p>Menu Principal</p>
+            <li><a href="index.html"><i class="fa-solid fa-house"></i>Tableau de bord</a></li>
+            <li><a href="agriculture.html"><i class="fa-solid fa-circle-user"></i>Agriculteurs</a></li>
+            <li><a href="gestionparcelles.html"><i class="fa-solid fa-road-spikes"></i>Parcelles</a></li>
+            <li><a href="cultures.html"><i class="fa-solid fa-seedling"></i>Cultures</a></li>
+            <li><a href="intrants.html"><i class="fa-solid fa-dumpster"></i>Intrants</a></li>
+            <li><a href="recolte.html"><i class="fa-solid fa-wheat-awn"></i>Récoltes</a></li>
+            <li><a href="saisons.html"><i class="fa-solid fa-wind"></i>Saisons</a></li>
+            <li><a href="zones.html"><i class="fa-solid fa-location-dot"></i>Zones Agroécologiques</a></li>
+            <li><a href="cooperatives.html"><i class="fa-solid fa-globe"></i>Coopératives</a></li>
+            <li><a href="utilisateurs.html"><i class="fa-solid fa-users"></i>Utilisateurs</a></li>
+            <li><a href="rapport.html"><i class="fa-solid fa-book"></i>Rapports</a></li>
+          </ul>
+          <ul>
+            <p>Paramètres</p>
+            <li class="para"><a href="parametres.html"><i class="fa-solid fa-gear"></i>Paramètres</a></li>
+          </ul>
+          <ul>
+            <li class="para"><a href="#"><i class="fa-solid fa-right-from-bracket"></i>Déconnexion</a></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+    <div class="sidebar-backdrop"></div>
+    <div class="topbar">
+      <div class="icon">
+        <i class="fa-solid fa-bars-staggered" id="menuToggle"></i>
+        <i class="fa-solid fa-bell" id="bells"></i>
+      </div>
+      <div class="profil"></div>
+    </div>
+    <section class="page" id="bilan">
+      <div class="page-head">
+        <div>
+          <div class="eyebrow">Rapports · Campagne 2025 – 2026</div>
+          <h2>Bilan &amp; Rapports</h2>
+          <p>Vue d'ensemble des performances de récolte sur l'ensemble des parcelles.</p>
+        </div>
+        <button class="btn btn-primary">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+              Exporter en PDF
+            </button>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c4.97 0 9-1.5 9-6V8c0-1-1-2-2-2-3 0-5 1-6 3-1-2-3-3-6-3-1 0-2 1-2 2v8c0 4.5 4.03 6 7 6Z"/></svg></div>
+          <div class="label">Total récolté</div>
+          <div class="value num">86,4 t</div>
+          <div class="delta up">▲ 12,3% vs saison passée</div>
+        </div>
+        <div class="stat-card">
+          <div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z"/></svg></div>
+          <div class="label">Parcelles actives</div>
+          <div class="value num">176</div>
+          <div class="delta up">▲ 8 nouvelles ce trimestre</div>
+        </div>
+        <div class="stat-card">
+          <div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 15l4-5 3 3 5-7"/></svg></div>
+          <div class="label">Rendement moyen</div>
+          <div class="value num">1 340 <span style="font-size:14px;color:var(--gray);font-weight:600">kg/ha</span></div>
+          <div class="delta down">▼ 2,1% vs objectif</div>
+        </div>
+        <div class="stat-card">
+          <div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div>
+          <div class="label">Coût total saison</div>
+          <div class="value num">5,2 M</div>
+          <div class="delta up">FCFA cumulés</div>
+        </div>
+      </div>
+
+      <div class="charts-row">
+        <div class="chart-card">
+          <h3>Récolte par culture</h3>
+          <div class="chart-sub">Quantité récoltée (en tonnes) sur la campagne en cours</div>
+          <div class="bar-chart">
+            <div class="bar-col"><span class="bar-val">31,2t</span><div class="bar" style="height:88%"></div><span class="bar-label">Maïs</span></div>
+            <div class="bar-col"><span class="bar-val">22,8t</span><div class="bar" style="height:64%"></div><span class="bar-label">Riz</span></div>
+            <div class="bar-col"><span class="bar-val">17,4t</span><div class="bar" style="height:49%"></div><span class="bar-label">Manioc</span></div>
+            <div class="bar-col"><span class="bar-val">10,1t</span><div class="bar" style="height:29%"></div><span class="bar-label">Igname</span></div>
+            <div class="bar-col"><span class="bar-val">4,9t</span><div class="bar" style="height:14%"></div><span class="bar-label">Sorgho</span></div>
+          </div>
+        </div>
+        <div class="chart-card">
+          <h3>Récolte par saison</h3>
+          <div class="chart-sub">Répartition en %</div>
+          <div class="pie-wrap">
+            <div class="pie"></div>
+            <div class="legend">
+              <div class="legend-item"><span class="legend-dot" style="background:var(--leaf-dark)"></span>Pluies — 42%</div>
+              <div class="legend-item"><span class="legend-dot" style="background:var(--leaf)"></span>Intermédiaire — 24%</div>
+              <div class="legend-item"><span class="legend-dot" style="background:#bfdcc8"></span>Sèche — 19%</div>
+              <div class="legend-item"><span class="legend-dot" style="background:var(--border)"></span>Non classée — 15%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="recap-card">
+        <div class="recap-head">
+          <h3>Tableau récapitulatif</h3>
+          <span class="sub" style="font-size:12px;color:var(--gray)">Mise à jour le 02/07/2026</span>
+        </div>
+        <div class="table-wrap">
+        <table>
+          <thead><tr><th>Culture</th><th>Quantité récoltée</th><th>Rendement moyen</th><th>Coût total</th><th>Évolution</th></tr></thead>
+          <tbody>
+            <tr><td><span class="culture-chip"><span class="culture-dot"></span>Maïs</span></td><td>31,2 t</td><td>1 480 kg/ha</td><td>1,9 M FCFA</td><td><div class="progress-bar"><span style="width:82%"></span></div></td></tr>
+            <tr><td><span class="culture-chip"><span class="culture-dot"></span>Riz</span></td><td>22,8 t</td><td>1 690 kg/ha</td><td>1,4 M FCFA</td><td><div class="progress-bar"><span style="width:70%"></span></div></td></tr>
+            <tr><td><span class="culture-chip"><span class="culture-dot"></span>Manioc</span></td><td>17,4 t</td><td>1 120 kg/ha</td><td>0,9 M FCFA</td><td><div class="progress-bar"><span style="width:55%"></span></div></td></tr>
+            <tr><td><span class="culture-chip"><span class="culture-dot"></span>Igname</span></td><td>10,1 t</td><td>980 kg/ha</td><td>0,6 M FCFA</td><td><div class="progress-bar"><span style="width:38%"></span></div></td></tr>
+          </tbody>
+        </table>
+        </div>
+      </div>
+    </section>
+    <script src="app.js"></script>
+  </body>
+</html>

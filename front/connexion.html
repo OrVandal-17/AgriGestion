@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Connexion — AGRI-TOGO</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+      integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+  </head>
+  <body>
+    <div class="auth-wrap">
+      <div class="auth-side">
+        <div class="auth-side-content">
+          <div class="logo">
+            <h1>AGRI-TOGO</h1>
+            <p>Plateforme de gestion agricole</p>
+          </div>
+          <p class="auth-tagline">
+            Suivez vos agriculteurs, vos parcelles et vos récoltes
+            en un seul endroit, pensé pour le contexte togolais.
+          </p>
+          <ul class="auth-points">
+            <li><i class="fa-solid fa-check"></i>Suivi des exploitations et des coopératives</li>
+            <li><i class="fa-solid fa-check"></i>Gestion des cultures et des intrants</li>
+            <li><i class="fa-solid fa-check"></i>Rapports de campagne en temps réel</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="auth-main">
+        <form class="auth-card" id="loginForm" action="connexion_traitement.php" method="POST">
+          <div class="auth-card-head">
+            <h2>Connexion</h2>
+            <p>Accédez à votre espace de gestion agricole.</p>
+          </div>
+
+          <div class="field">
+            <label for="email">Adresse e-mail</label>
+            <input type="email" id="email" name="email" placeholder="nom@agritogo.tg" required />
+          </div>
+
+          <div class="field">
+            <label for="password">Mot de passe</label>
+            <input type="password" id="password" name="password" placeholder="••••••••" required />
+          </div>
+
+          <div class="auth-row">
+            <label class="auth-checkbox">
+              <input type="checkbox" name="remember" />
+              Se souvenir de moi
+            </label>
+            <a href="#" class="auth-link">Mot de passe oublié ?</a>
+          </div>
+
+          <button type="submit" class="btn btn-primary auth-submit">
+            <i class="fa-solid fa-right-to-bracket"></i>Se connecter
+          </button>
+
+          <div id="auth-error" class="auth-error" hidden>
+            Identifiants incorrects. Veuillez réessayer.
+          </div>
+
+          <p class="auth-switch">
+            Pas encore de compte ?
+            <a href="inscription.html">Créer un compte</a>
+          </p>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      // NOTE 
+      document.getElementById("loginForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+        window.location.href = "index.html";
+      });
+    </script>
+  </body>
+</html>
