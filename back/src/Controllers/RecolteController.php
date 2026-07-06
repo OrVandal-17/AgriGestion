@@ -5,7 +5,7 @@ namespace App\Controllers;
 use App\Core\Request;
 use App\Core\Response;
 use App\Models\Agriculteur;
-use App\Models\Parcelle;
+use App\Models\Exploitation;
 use App\Models\Recolte;
 
 class RecolteController
@@ -13,34 +13,33 @@ class RecolteController
     /** GET /recoltes */
     public static function index(Request $request): void
     {
-        $agriculteur = self::currentAgriculteur($request);
-        if (!$agriculteur) {
+        $idUtil = self::currentAgriculteur($request);
+        if ($idUtil === null) {
             return;
         }
-        Response::json(Recolte::historiqueAgriculteur((int) $agriculteur['Id_agri']));
+        Response::json(Recolte::historiqueAgriculteur($idUtil));
     }
 
-    /** POST /recoltes : saisir une recolte */
+    /** POST /recoltes : saisir une recolte pour une exploitation */
     public static function store(Request $request): void
     {
-        $agriculteur = self::currentAgriculteur($request);
-        if (!$agriculteur) {
+        $idUtil = self::currentAgriculteur($request);
+        if ($idUtil === null) {
             return;
         }
 
-        $idParcelle = (int) $request->input('Id_parcelle');
-        $idCulture = (int) $request->input('Id_culture');
+        $idExploitation = (int) $request->input('IdExploitation');
         $date = $request->input('DateRecolte', date('Y-m-d'));
         $rendement = $request->input('Rendement');
         $cout = $request->input('Cout');
         $observation = $request->input('Observation');
 
-        if (!$idParcelle || !$idCulture) {
-            Response::error('Id_parcelle et Id_culture sont requis', 422);
+        if (!$idExploitation) {
+            Response::error('IdExploitation est requis', 422);
             return;
         }
-        if (!Parcelle::belongsToAgriculteur($idParcelle, (int) $agriculteur['Id_agri'])) {
-            Response::error('Cette parcelle ne vous appartient pas', 403);
+        if (!Exploitation::belongsToAgriculteur($idExploitation, $idUtil)) {
+            Response::error('Cette exploitation ne vous appartient pas', 403);
             return;
         }
 
@@ -49,20 +48,19 @@ class RecolteController
             'Rendement' => $rendement,
             'Cout' => $cout,
             'Observation' => $observation,
-            'Id_parcelle' => $idParcelle,
-            'Id_culture' => $idCulture,
+            'IdExploitation' => $idExploitation,
         ]);
 
         Response::json(Recolte::find($id), 201);
     }
 
-    private static function currentAgriculteur(Request $request): ?array
+    private static function currentAgriculteur(Request $request): ?int
     {
-        $agriculteur = Agriculteur::findByUtilisateur((int) $request->user['sub']);
-        if (!$agriculteur) {
+        $idUtil = (int) $request->user['sub'];
+        if (!Agriculteur::findByUtilisateur($idUtil)) {
             Response::error('Aucune fiche agriculteur associee a ce compte', 404);
             return null;
         }
-        return $agriculteur;
+        return $idUtil;
     }
 }

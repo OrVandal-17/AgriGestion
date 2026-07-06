@@ -4,6 +4,8 @@ namespace App\Controllers;
 
 use App\Core\Request;
 use App\Core\Response;
+use App\Models\Agriculteur;
+use App\Models\Responsable;
 use App\Models\Utilisateur;
 
 class UtilisateurController
@@ -12,10 +14,14 @@ class UtilisateurController
 
     public static function index(Request $request): void
     {
-        $rows = Utilisateur::all('Nom_util');
+        $rows = Utilisateur::all('Nom');
         foreach ($rows as &$row) {
-            unset($row['MotPasse_util']);
+            unset($row['PassHash']);
+            $roleInfo = Utilisateur::determineRole((int) $row['IdUtil']);
+            $row['Role'] = $roleInfo['role'] ?? null;
+            $row['IdCoop'] = $roleInfo['coop'] ?? null;
         }
+        unset($row);
         Response::json($rows);
     }
 
@@ -26,78 +32,114 @@ class UtilisateurController
             Response::error('Utilisateur introuvable', 404);
             return;
         }
-        unset($row['MotPasse_util']);
+        unset($row['PassHash']);
+        $roleInfo = Utilisateur::determineRole((int) $row['IdUtil']);
+        $row['Role'] = $roleInfo['role'] ?? null;
+        $row['IdCoop'] = $roleInfo['coop'] ?? null;
         Response::json($row);
     }
 
+    /**
+     * Cree un compte utilisateur puis attache sa specialisation
+     * (Administrateur / Responsable / Agriculteur). IdCoop n'est
+     * pertinent que pour Agriculteur et Responsable.
+     */
     public static function store(Request $request): void
     {
         $body = $request->body;
-        $required = ['Nom_util', 'Prenom_util', 'Email_util', 'MotPasse_util', 'Role_util'];
+        $required = ['Nom', 'Prenom', 'Email', 'MotPasse', 'Role'];
         foreach ($required as $field) {
             if (empty($body[$field])) {
                 Response::error("Le champ $field est requis", 422);
                 return;
             }
         }
-        if (!in_array($body['Role_util'], self::ROLES, true)) {
+        if (!in_array($body['Role'], self::ROLES, true)) {
             Response::error('Role invalide', 422);
             return;
         }
-        if (Utilisateur::findByEmail($body['Email_util'])) {
+        if (Utilisateur::findByEmail($body['Email'])) {
             Response::error('Cet email est deja utilise', 409);
             return;
         }
 
-        $id = Utilisateur::create([
-            'Nom_util' => $body['Nom_util'],
-            'Prenom_util' => $body['Prenom_util'],
-            'Tel_util' => $body['Tel_util'] ?? null,
-            'Email_util' => $body['Email_util'],
-            'MotPasse_util' => password_hash($body['MotPasse_util'], PASSWORD_BCRYPT),
-            'Role_util' => $body['Role_util'],
-            'Id_coop' => $body['Id_coop'] ?? null,
+        $idUtil = Utilisateur::create([
+            'Nom' => $body['Nom'],
+            'Prenom' => $body['Prenom'],
+            'Tel' => $body['Tel'] ?? null,
+            'Email' => $body['Email'],
+            'DateNaissance' => $body['DateNaissance'] ?? null,
+            'Sexe' => $body['Sexe'] ?? null,
+            'PassHash' => password_hash($body['MotPasse'], PASSWORD_BCRYPT),
         ]);
 
-        $row = Utilisateur::find($id);
-        unset($row['MotPasse_util']);
+        $idCoop = (!empty($body['IdCoop'])) ? (int) $body['IdCoop'] : null;
+        Utilisateur::attachRole($idUtil, $body['Role'], $idCoop);
+
+        $row = Utilisateur::find($idUtil);
+        unset($row['PassHash']);
+        $row['Role'] = $body['Role'];
+        $row['IdCoop'] = $idCoop;
         Response::json($row, 201);
     }
 
     public static function update(Request $request): void
     {
-        $id = $request->params['id'];
+        $id = (int) $request->params['id'];
         if (!Utilisateur::find($id)) {
             Response::error('Utilisateur introuvable', 404);
             return;
         }
         $body = $request->body;
         $data = array_intersect_key($body, array_flip([
-            'Nom_util', 'Prenom_util', 'Tel_util', 'Email_util', 'Role_util', 'Id_coop',
+            'Nom', 'Prenom', 'Tel', 'Email', 'DateNaissance', 'Sexe',
         ]));
-        if (!empty($body['MotPasse_util'])) {
-            $data['MotPasse_util'] = password_hash($body['MotPasse_util'], PASSWORD_BCRYPT);
+        if (!empty($body['MotPasse'])) {
+            $data['PassHash'] = password_hash($body['MotPasse'], PASSWORD_BCRYPT);
         }
-        if (isset($data['Role_util']) && !in_array($data['Role_util'], self::ROLES, true)) {
-            Response::error('Role invalide', 422);
-            return;
+        if (!empty($data)) {
+            Utilisateur::update($id, $data);
         }
-        if (empty($data)) {
-            Response::error('Aucune donnee valide fournie', 422);
-            return;
+
+        if (!empty($body['Role'])) {
+            if (!in_array($body['Role'], self::ROLES, true)) {
+                Response::error('Role invalide', 422);
+                return;
+            }
+            $current = Utilisateur::determineRole($id);
+            if ($current && $current['role'] !== $body['Role']) {
+                Utilisateur::detachRole($id, $current['role']);
+            }
+            $idCoop = (!empty($body['IdCoop'])) ? (int) $body['IdCoop'] : null;
+            Utilisateur::attachRole($id, $body['Role'], $idCoop);
+        } elseif (array_key_exists('IdCoop', $body)) {
+            $current = Utilisateur::determineRole($id);
+            $idCoop = $body['IdCoop'] !== '' ? $body['IdCoop'] : null;
+            if ($current && $current['role'] === 'Agriculteur') {
+                Agriculteur::update($id, ['IdCoop' => $idCoop]);
+            } elseif ($current && $current['role'] === 'Responsable') {
+                Responsable::update($id, ['IdCoop' => $idCoop]);
+            }
         }
-        Utilisateur::update($id, $data);
+
         $row = Utilisateur::find($id);
-        unset($row['MotPasse_util']);
+        unset($row['PassHash']);
+        $roleInfo = Utilisateur::determineRole($id);
+        $row['Role'] = $roleInfo['role'] ?? null;
+        $row['IdCoop'] = $roleInfo['coop'] ?? null;
         Response::json($row);
     }
 
     public static function destroy(Request $request): void
     {
-        $id = $request->params['id'];
+        $id = (int) $request->params['id'];
         if (!Utilisateur::find($id)) {
             Response::error('Utilisateur introuvable', 404);
             return;
+        }
+        $current = Utilisateur::determineRole($id);
+        if ($current) {
+            Utilisateur::detachRole($id, $current['role']);
         }
         Utilisateur::delete($id);
         Response::json(['message' => 'Supprime avec succes']);

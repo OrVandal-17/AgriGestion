@@ -16,7 +16,7 @@ class ParcelleController extends CrudController
 
     protected static function fillable(): array
     {
-        return ['Superficie', 'Localisation', 'EtatParcelle', 'Id_agri', 'Id_zone'];
+        return ['Superficie', 'Localisation', 'EtatParcelle', 'IdZone', 'IdUtil'];
     }
 
     /**
@@ -24,11 +24,11 @@ class ParcelleController extends CrudController
      */
     public static function mine(Request $request): void
     {
-        $agriculteur = Agriculteur::findByUtilisateur((int) $request->user['sub']);
-        if (!$agriculteur) {
+        $idUtil = (int) $request->user['sub'];
+        if (!Agriculteur::findByUtilisateur($idUtil)) {
             Response::error('Aucune fiche agriculteur associee a ce compte', 404);
             return;
         }
-        Response::json(Parcelle::byAgriculteur((int) $agriculteur['Id_agri']));
+        Response::json(Parcelle::byAgriculteur($idUtil));
     }
 }

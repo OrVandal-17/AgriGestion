@@ -1,7 +1,7 @@
 # AgriGestion — Backend PHP (PDO)
 
 Backend REST pour la gestion des exploitations agricoles (coopératives, parcelles,
-mises en culture, intrants, récoltes) — Togo.
+exploitations/mises en culture, intrants, récoltes) — Togo.
 
 ---
 
@@ -28,8 +28,35 @@ avec un hébergement mutualisé simple (PHP 8.1+, MariaDB/MySQL, module
 `mod_rewrite`).
 
 Authentification par **Bearer Token (JWT)** : chaque route protégée exige
-l'en-tête `Authorization: Bearer <token>`. Le token contient `sub` (Id_util),
-`role` et `coop` (Id_coop, utile pour le Responsable de coopérative).
+l'en-tête `Authorization: Bearer <token>`. Le token contient `sub` (IdUtil),
+`role` et `coop` (IdCoop, utile pour l'Agriculteur et le Responsable de
+coopérative). Le rôle n'est plus une colonne `Role_util` : il est déterminé
+par la table de spécialisation dans laquelle apparaît l'utilisateur
+(`administrateur`, `responsable` ou `agriculteur` — voir section 2).
+
+---
+
+## 2. Modèle de données
+
+Le schéma (`database/gestion_agricole_togo.sql`) suit une spécialisation par
+héritage : `Utilisateur` porte les informations communes de connexion
+(Nom, Prenom, Email, PassHash...), et chacun des rôles est une table à part
+dont la clé primaire `IdUtil` est **aussi** une clé étrangère vers
+`Utilisateur` :
+
+- `administrateur (IdUtil)`
+- `responsable (IdUtil, IdCoop)`
+- `agriculteur (IdUtil, IdCoop)`
+
+Un compte n'a donc pas de colonne "rôle" : son rôle est déduit de la table
+dans laquelle sa ligne `IdUtil` apparaît (voir `Utilisateur::determineRole()`).
+
+Le reste du schéma : `Cooperative`, `Culture`, `ZoneAgroEcologique`,
+`Intrant`, `Saison`, `Parcelle` (rattachée à un `agriculteur` via `IdUtil`),
+`Exploitation` (mise en culture d'une `Parcelle` pour une `Culture` et une
+`Saison` données — anciennement `mise_en_culture`), `Recolte` (rattachée à
+une `Exploitation`) et `Utiliser` (association `Intrant` ↔ `Exploitation`,
+clé composite).
 
 ---
 
@@ -85,11 +112,11 @@ Toutes les réponses sont en JSON.
 
 | Méthode | Route | Rôle |
 |---|---|---|
-| GET/POST | `/utilisateurs` | Administrateur |
+| GET/POST | `/utilisateurs` | Administrateur — `POST` attend `{Nom, Prenom, Email, MotPasse, Role, IdCoop?}` et crée le compte + sa spécialisation |
 | GET/PUT/DELETE | `/utilisateurs/{id}` | Administrateur |
 | GET | `/cooperatives` | tout utilisateur authentifié (lecture) |
 | POST/PUT/DELETE | `/cooperatives(/{id})` | Administrateur |
-| GET/POST/PUT/DELETE | `/agriculteurs(/{id})` | Administrateur |
+| GET/POST/PUT/DELETE | `/agriculteurs(/{id})` | Administrateur — gère à la fois le compte `utilisateur` et sa spécialisation `agriculteur` |
 | GET/POST/PUT/DELETE | `/parcelles(/{id})` | Administrateur |
 | GET | `/zones`, `/cultures`, `/intrants`, `/saisons` | tout utilisateur authentifié (lecture, pour les listes déroulantes) |
 | POST/PUT/DELETE | `/zones`, `/cultures`, `/intrants`, `/saisons` | Administrateur |
@@ -99,12 +126,12 @@ Toutes les réponses sont en JSON.
 | Méthode | Route | Description |
 |---|---|---|
 | GET | `/mes-parcelles` | Parcelles de l'agriculteur connecté uniquement |
-| GET/POST | `/mises-en-culture` | Historique / saisie d'un semis (déclenche l'alerte de rotation si même culture que la dernière fois sur la parcelle) |
-| GET/POST | `/intrants-utilises` | Historique / saisie d'un traitement (engrais, pesticide...) |
-| GET/POST | `/recoltes` | Historique / saisie d'une récolte |
+| GET/POST | `/exploitations` | Historique / saisie d'une mise en exploitation d'une parcelle (semis — déclenche l'alerte de rotation si même culture que la précédente exploitation de la parcelle) |
+| GET/POST | `/intrants-utilises` | Historique / saisie d'un traitement (engrais, pesticide...) sur une exploitation |
+| GET/POST | `/recoltes` | Historique / saisie d'une récolte, rattachée à une exploitation |
 
-Toutes les écritures vérifient que la parcelle appartient bien à
-l'agriculteur connecté (403 sinon).
+Toutes les écritures vérifient que la parcelle / l'exploitation appartient
+bien à l'agriculteur connecté (403 sinon).
 
 ### Responsable de coopérative
 
@@ -118,14 +145,14 @@ l'agriculteur connecté (403 sinon).
 ```bash
 curl -X POST http://localhost/auth/login \
   -H "Content-Type: application/json" \
-  -d '{"email":"admin@agrigestion.tg","mot_de_passe":"..."}'
+  -d '{"email":"admin@agrigestion.tg","mot_de_passe":"Admin@2026"}'
 
 curl http://localhost/mes-parcelles \
   -H "Authorization: Bearer <token>"
 
-curl -X POST http://localhost/mises-en-culture \
+curl -X POST http://localhost/exploitations \
   -H "Authorization: Bearer <token>" -H "Content-Type: application/json" \
-  -d '{"Id_parcelle":1,"Id_culture":3,"Id_saison":2,"DateMiseEnCulture":"2026-06-01"}'
+  -d '{"IdParcelle":1,"IdCulture":3,"IdSaison":2,"DateDebut":"2026-06-01"}'
 ```
 
 ---
