@@ -9,7 +9,7 @@ class Auth
 {
     /**
      * Verifie le token Bearer et retourne le payload utilisateur
-     * (Id_util, role, Id_coop) ou null si absent/invalide.
+     * (sub = IdUtil, role, coop = IdCoop) ou null si absent/invalide.
      */
     public static function check(Request $request): ?array
     {

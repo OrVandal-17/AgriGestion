@@ -13,6 +13,6 @@ class IntrantController extends CrudController
 
     protected static function fillable(): array
     {
-        return ['Nom_intrant', 'Type_intrant', 'Unite', 'PrixUnitaire'];
+        return ['NomIntrant', 'TypeIntrant', 'Unite', 'PrixUnitaire'];
     }
 }

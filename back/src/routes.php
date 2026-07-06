@@ -4,8 +4,8 @@ use App\Controllers\AgriculteurController;
 use App\Controllers\AuthController;
 use App\Controllers\CooperativeController;
 use App\Controllers\CultureController;
+use App\Controllers\ExploitationController;
 use App\Controllers\IntrantController;
-use App\Controllers\MiseEnCultureController;
 use App\Controllers\ParcelleController;
 use App\Controllers\RapportController;
 use App\Controllers\RecolteController;
@@ -81,9 +81,9 @@ $router->delete('/saisons/{id}', [SaisonController::class, 'destroy'], ADMIN);
 // ---- Agriculteur : mes parcelles ----
 $router->get('/mes-parcelles', [ParcelleController::class, 'mine'], AGRICULTEUR);
 
-// ---- Agriculteur : mises en culture (semis) + alerte de rotation ----
-$router->get('/mises-en-culture', [MiseEnCultureController::class, 'index'], AGRICULTEUR);
-$router->post('/mises-en-culture', [MiseEnCultureController::class, 'store'], AGRICULTEUR);
+// ---- Agriculteur : exploitations (mise en culture d'une parcelle) + alerte de rotation ----
+$router->get('/exploitations', [ExploitationController::class, 'index'], AGRICULTEUR);
+$router->post('/exploitations', [ExploitationController::class, 'store'], AGRICULTEUR);
 
 // ---- Agriculteur : intrants utilises (traitements) ----
 $router->get('/intrants-utilises', [UtilisationController::class, 'index'], AGRICULTEUR);

@@ -21,19 +21,27 @@ class AuthController
         }
 
         $user = Utilisateur::findByEmail($email);
-        if (!$user || !password_verify($motDePasse, $user['MotPasse_util'])) {
+        if (!$user || !password_verify($motDePasse, $user['PassHash'])) {
             Response::error('Identifiants invalides', 401);
             return;
         }
 
+        $roleInfo = Utilisateur::determineRole((int) $user['IdUtil']);
+        if (!$roleInfo) {
+            Response::error('Ce compte n\'a aucun role attribue', 403);
+            return;
+        }
+
         $payload = [
-            'sub' => (int) $user['Id_util'],
-            'role' => $user['Role_util'],
-            'coop' => $user['Id_coop'] !== null ? (int) $user['Id_coop'] : null,
+            'sub' => (int) $user['IdUtil'],
+            'role' => $roleInfo['role'],
+            'coop' => $roleInfo['coop'],
         ];
         $token = JWT::encode($payload);
 
-        unset($user['MotPasse_util']);
+        unset($user['PassHash']);
+        $user['Role'] = $roleInfo['role'];
+        $user['IdCoop'] = $roleInfo['coop'];
 
         Response::json([
             'token' => $token,
@@ -48,11 +56,15 @@ class AuthController
             Response::error('Utilisateur introuvable', 404);
             return;
         }
-        unset($user['MotPasse_util']);
+        unset($user['PassHash']);
+
+        $roleInfo = Utilisateur::determineRole((int) $user['IdUtil']);
+        $user['Role'] = $roleInfo['role'] ?? null;
+        $user['IdCoop'] = $roleInfo['coop'] ?? null;
 
         $agriculteur = null;
-        if ($user['Role_util'] === 'Agriculteur') {
-            $agriculteur = Agriculteur::findByUtilisateur((int) $user['Id_util']);
+        if (($roleInfo['role'] ?? null) === 'Agriculteur') {
+            $agriculteur = Agriculteur::findByUtilisateur((int) $user['IdUtil']);
         }
 
         Response::json(['utilisateur' => $user, 'agriculteur' => $agriculteur]);

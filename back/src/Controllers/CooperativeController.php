@@ -13,6 +13,6 @@ class CooperativeController extends CrudController
 
     protected static function fillable(): array
     {
-        return ['Nom_coop', 'Adresse_coop', 'Telephone_coop', 'Email_coop'];
+        return ['NomCoop', 'AdresseCoop', 'EmailCoop'];
     }
 }

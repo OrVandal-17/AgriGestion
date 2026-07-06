@@ -13,6 +13,6 @@ class ZoneController extends CrudController
 
     protected static function fillable(): array
     {
-        return ['Nom_zone', 'Region', 'Description'];
+        return ['NomZone', 'Region', 'Description'];
     }
 }

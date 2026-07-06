@@ -5,47 +5,49 @@ namespace App\Models;
 class Recolte extends Model
 {
     protected static string $table = 'recolte';
-    protected static string $primaryKey = 'Id_recolte';
+    protected static string $primaryKey = 'IdRecolte';
 
-    public static function historiqueAgriculteur(int $idAgri): array
+    public static function historiqueAgriculteur(int $idUtil): array
     {
         $stmt = static::db()->prepare(
-            'SELECT r.*, c.Nom_culture, p.Localisation
+            'SELECT r.*, c.NomCulture, p.Localisation
              FROM recolte r
-             JOIN culture c ON c.Id_culture = r.Id_culture
-             JOIN parcelle p ON p.Id_parcelle = r.Id_parcelle
-             WHERE p.Id_agri = ?
+             JOIN exploitation e ON e.IdExploitation = r.IdExploitation
+             JOIN culture c ON c.IdCulture = e.IdCulture
+             JOIN parcelle p ON p.IdParcelle = e.IdParcelle
+             WHERE p.IdUtil = ?
              ORDER BY r.DateRecolte DESC'
         );
-        $stmt->execute([$idAgri]);
+        $stmt->execute([$idUtil]);
         return $stmt->fetchAll();
     }
 
     /**
      * Bilan de production pour le Responsable de cooperative : agrege
-     * les recoltes de toutes les parcelles des agriculteurs de sa coop.
-     * Filtres optionnels : saison, culture, periode.
+     * les recoltes de toutes les parcelles/exploitations des
+     * agriculteurs de sa coop. Filtres optionnels : saison, culture, periode.
      */
     public static function bilanCooperative(int $idCoop, array $filters = []): array
     {
-        $sql = 'SELECT r.Id_recolte, r.DateRecolte, r.Rendement, r.Cout, r.Observation,
-                       c.Nom_culture, p.Localisation, p.Id_parcelle,
-                       ag.Nom_agri, ag.Prenom_agri, s.Libelle AS Libelle_saison
+        $sql = 'SELECT r.IdRecolte, r.DateRecolte, r.Rendement, r.Cout, r.Observation,
+                       c.NomCulture, p.Localisation, p.IdParcelle,
+                       u.Nom, u.Prenom, s.Libelle AS LibelleSaison
                 FROM recolte r
-                JOIN culture c ON c.Id_culture = r.Id_culture
-                JOIN parcelle p ON p.Id_parcelle = r.Id_parcelle
-                JOIN agriculteur ag ON ag.Id_agri = p.Id_agri
-                LEFT JOIN mise_en_culture mec ON mec.Id_parcelle = p.Id_parcelle AND mec.Id_culture = r.Id_culture
-                LEFT JOIN saison s ON s.Id_saison = mec.Id_saison
-                WHERE ag.Id_coop = ?';
+                JOIN exploitation e ON e.IdExploitation = r.IdExploitation
+                JOIN culture c ON c.IdCulture = e.IdCulture
+                JOIN parcelle p ON p.IdParcelle = e.IdParcelle
+                JOIN agriculteur ag ON ag.IdUtil = p.IdUtil
+                JOIN utilisateur u ON u.IdUtil = ag.IdUtil
+                LEFT JOIN saison s ON s.IdSaison = e.IdSaison
+                WHERE ag.IdCoop = ?';
         $params = [$idCoop];
 
         if (!empty($filters['culture_id'])) {
-            $sql .= ' AND r.Id_culture = ?';
+            $sql .= ' AND e.IdCulture = ?';
             $params[] = $filters['culture_id'];
         }
         if (!empty($filters['saison_id'])) {
-            $sql .= ' AND s.Id_saison = ?';
+            $sql .= ' AND e.IdSaison = ?';
             $params[] = $filters['saison_id'];
         }
         if (!empty($filters['date_debut'])) {

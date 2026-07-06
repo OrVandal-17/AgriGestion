@@ -13,6 +13,6 @@ class CultureController extends CrudController
 
     protected static function fillable(): array
     {
-        return ['Nom_culture', 'Type_culture', 'DatePlantation', 'DureeCycle'];
+        return ['NomCulture', 'TypeCulture', 'DureeCycle'];
     }
 }
