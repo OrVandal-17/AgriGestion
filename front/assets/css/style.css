@@ -311,17 +311,18 @@ tbody tr:hover {
   white-space: nowrap;
 }
 .avatar-sq {
-  width: 32px;
-  height: 32px;
-  border-radius: 9px;
-  background: var(--leaf-light);
-  color: var(--forest);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 12px;
-  flex-shrink: 0;
+    width: fit-content;
+    height: 32px;
+    border-radius: 9px;
+    background: var(--leaf-light);
+    color: var(--forest);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 12px;
+    flex-shrink: 0;
+    padding: 10px;
 }
 .sub {
   color: var(--gray);
@@ -480,13 +481,13 @@ tbody tr:hover {
   overflow: hidden;
 }
 .toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14px;
-  padding: 16px 18px;
-  border-bottom: 1px solid var(--border-strong);
-  flex-wrap: wrap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    padding: 16px;
+    border-bottom: 1px solid var(--border-strong);
+    flex-wrap: wrap;
 }
 .toolbar-left {
   display: flex;
@@ -1082,6 +1083,29 @@ tbody tr:hover {
 }
 .auth-terms input {
   margin-top: 2px;
+}
+
+.auth-config {
+  font-size: 12px;
+  color: var(--gray);
+}
+.auth-config summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+.auth-config input {
+  font-size: 12.5px;
+}
+
+.tab-btn {
+  border: 1px solid var(--border);
+  background: #f4f6f4;
+}
+.tab-btn.active {
+  background: var(--leaf);
+  color: #fff;
+  border-color: var(--leaf);
+  font-weight: 600;
 }
 
 @media (max-width: 900px) {

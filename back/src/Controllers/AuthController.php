@@ -26,14 +26,14 @@ class AuthController
             return;
         }
 
-        $roleInfo = Utilisateur::determineRole((int) $user['IdUtil']);
+        $roleInfo = Utilisateur::determineRole($user['IdUtil']);
         if (!$roleInfo) {
             Response::error('Ce compte n\'a aucun role attribue', 403);
             return;
         }
 
         $payload = [
-            'sub' => (int) $user['IdUtil'],
+            'sub' => $user['IdUtil'],
             'role' => $roleInfo['role'],
             'coop' => $roleInfo['coop'],
         ];
@@ -58,13 +58,13 @@ class AuthController
         }
         unset($user['PassHash']);
 
-        $roleInfo = Utilisateur::determineRole((int) $user['IdUtil']);
+        $roleInfo = Utilisateur::determineRole($user['IdUtil']);
         $user['Role'] = $roleInfo['role'] ?? null;
         $user['IdCoop'] = $roleInfo['coop'] ?? null;
 
         $agriculteur = null;
         if (($roleInfo['role'] ?? null) === 'Agriculteur') {
-            $agriculteur = Agriculteur::findByUtilisateur((int) $user['IdUtil']);
+            $agriculteur = Agriculteur::findByUtilisateur($user['IdUtil']);
         }
 
         Response::json(['utilisateur' => $user, 'agriculteur' => $agriculteur]);

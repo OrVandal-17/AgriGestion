@@ -6,8 +6,9 @@ class Recolte extends Model
 {
     protected static string $table = 'recolte';
     protected static string $primaryKey = 'IdRecolte';
+    protected static ?string $prefix = 'REC';
 
-    public static function historiqueAgriculteur(int $idUtil): array
+    public static function historiqueAgriculteur(string $idUtil): array
     {
         $stmt = static::db()->prepare(
             'SELECT r.*, c.NomCulture, p.Localisation
@@ -27,7 +28,7 @@ class Recolte extends Model
      * les recoltes de toutes les parcelles/exploitations des
      * agriculteurs de sa coop. Filtres optionnels : saison, culture, periode.
      */
-    public static function bilanCooperative(int $idCoop, array $filters = []): array
+    public static function bilanCooperative(string $idCoop, array $filters = []): array
     {
         $sql = 'SELECT r.IdRecolte, r.DateRecolte, r.Rendement, r.Cout, r.Observation,
                        c.NomCulture, p.Localisation, p.IdParcelle,

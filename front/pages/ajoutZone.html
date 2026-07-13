@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ajouter une zone agroécologique — AGRI-TOGO</title>
+    <link rel="stylesheet" href="../assets/css/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+      integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <script src="../assets/js/api.js"></script>
+  </head>
+  <body>
+    <div class="sidebar">
+      <div class="logo">
+        <h1>AGRI-TOGO</h1>
+        <p>Plateforme de gestion agricole</p>
+      </div>
+      <div class="accueil">
+        <nav>
+          <ul>
+            <p>Menu Principal</p>
+            <li data-roles="Agriculteur"><a href="../index.html"><i class="fa-solid fa-house"></i>Tableau de bord</a></li>
+
+            <li data-roles="Administrateur"><a href="agriculture.html"><i class="fa-solid fa-circle-user"></i>Agriculteurs</a></li>
+            <li data-roles="Administrateur"><a href="gestionparcelles.html"><i class="fa-solid fa-road-spikes"></i>Parcelles</a></li>
+
+            <li data-roles="Agriculteur"><a href="exploitation.html"><i class="fa-solid fa-tractor"></i>Exploitation</a></li>
+
+            <li><a href="cultures.html"><i class="fa-solid fa-seedling"></i>Cultures</a></li>
+            <li><a href="intrants.html"><i class="fa-solid fa-dumpster"></i>Intrants</a></li>
+            <li><a href="saisons.html"><i class="fa-solid fa-wind"></i>Saisons</a></li>
+            <li><a href="zones.html"><i class="fa-solid fa-location-dot"></i>Zones Agroécologiques</a></li>
+            <li><a href="cooperatives.html"><i class="fa-solid fa-globe"></i>Coopératives</a></li>
+
+            <li data-roles="Administrateur"><a href="utilisateurs.html"><i class="fa-solid fa-users"></i>Utilisateurs</a></li>
+            <li data-roles="Responsable"><a href="rapport.html"><i class="fa-solid fa-book"></i>Rapports</a></li>
+          </ul>
+          <ul>
+            <li class="para"><a href="#" onclick="Api.logout(); return false;"><i class="fa-solid fa-right-from-bracket"></i>Déconnexion</a></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+    <div class="sidebar-backdrop"></div>
+    <div class="topbar">
+      <div class="icon">
+        <i class="fa-solid fa-bars-staggered" id="menuToggle"></i>
+        <i class="fa-solid fa-bell" id="bells"></i>
+      </div>
+      <div class="profil" id="profilBadge" title=""></div>
+    </div>
+    <section class="page" id="ajoutZone">
+      <div class="page-head">
+        <div>
+          <div class="eyebrow">Zones agroécologiques · Nouvelle</div>
+          <h2>Ajouter une zone agroécologique</h2>
+          <p>Enregistrez une nouvelle zone agroécologique.</p>
+        </div>
+        
+      </div>
+
+      <div class="form-wrap">
+        <div class="cardy form-card">
+          <form id="addForm">
+            <div class="form-grid">
+              <div class="field span-2"><label>Nom de la zone</label><input type="text" id="NomZone" required placeholder="Ex : Zone soudanienne" /></div>
+              <div class="field"><label>Région</label><input type="text" id="Region" placeholder="Ex : Savanes" /></div>
+              <div class="field span-2"><label>Description</label><textarea id="Description" placeholder="Type de sol, climat, particularités..."></textarea></div>
+            </div>
+            <div id="form-error" class="auth-error" hidden style="margin:0 24px 16px;"></div>
+            <div class="form-actions">
+              <a href="zones.html" class="btn btn-ghost">Annuler</a>
+              <button type="submit" class="btn btn-primary">Enregistrer</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <script>
+      const currentUser = Api.requireAuth(["Administrateur"]);
+
+      document.getElementById("addForm").addEventListener("submit", async function (e) {
+        e.preventDefault();
+        const errorBox = document.getElementById("form-error");
+        errorBox.hidden = true;
+        const payload = {
+          NomZone: document.getElementById("NomZone").value,
+          Region: document.getElementById("Region").value || null,
+          Description: document.getElementById("Description").value || null,
+        };
+        try {
+          await Api.post("/zones", payload);
+          window.location.href = "zones.html";
+        } catch (err) {
+          errorBox.textContent = err.message;
+          errorBox.hidden = false;
+        }
+      });
+    </script>
+    <script src="../assets/js/app.js"></script>
+  </body>
+</html>

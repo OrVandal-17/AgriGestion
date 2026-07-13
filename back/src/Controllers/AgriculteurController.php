@@ -28,7 +28,7 @@ class AgriculteurController
 
     public static function show(Request $request): void
     {
-        $row = Agriculteur::withProfile((int) $request->params['id']);
+        $row = Agriculteur::withProfile($request->params['id']);
         if (!$row) {
             Response::error('Agriculteur introuvable', 404);
             return;
@@ -65,7 +65,7 @@ class AgriculteurController
             'PassHash' => password_hash($body['MotPasse'], PASSWORD_BCRYPT),
         ]);
 
-        $idCoop = (!empty($body['IdCoop'])) ? (int) $body['IdCoop'] : null;
+        $idCoop = !empty($body['IdCoop']) ? $body['IdCoop'] : null;
         Utilisateur::attachRole($idUtil, 'Agriculteur', $idCoop);
 
         Response::json(Agriculteur::withProfile($idUtil), 201);
@@ -73,7 +73,7 @@ class AgriculteurController
 
     public static function update(Request $request): void
     {
-        $idUtil = (int) $request->params['id'];
+        $idUtil = $request->params['id'];
         if (!Agriculteur::find($idUtil)) {
             Response::error('Agriculteur introuvable', 404);
             return;
@@ -100,7 +100,7 @@ class AgriculteurController
      */
     public static function destroy(Request $request): void
     {
-        $idUtil = (int) $request->params['id'];
+        $idUtil = $request->params['id'];
         if (!Agriculteur::find($idUtil)) {
             Response::error('Agriculteur introuvable', 404);
             return;

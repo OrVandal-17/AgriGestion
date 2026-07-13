@@ -28,13 +28,13 @@ class RecolteController
             return;
         }
 
-        $idExploitation = (int) $request->input('IdExploitation');
+        $idExploitation = $request->input('IdExploitation');
         $date = $request->input('DateRecolte', date('Y-m-d'));
         $rendement = $request->input('Rendement');
         $cout = $request->input('Cout');
         $observation = $request->input('Observation');
 
-        if (!$idExploitation) {
+        if (empty($idExploitation)) {
             Response::error('IdExploitation est requis', 422);
             return;
         }
@@ -54,9 +54,9 @@ class RecolteController
         Response::json(Recolte::find($id), 201);
     }
 
-    private static function currentAgriculteur(Request $request): ?int
+    private static function currentAgriculteur(Request $request): ?string
     {
-        $idUtil = (int) $request->user['sub'];
+        $idUtil = $request->user['sub'];
         if (!Agriculteur::findByUtilisateur($idUtil)) {
             Response::error('Aucune fiche agriculteur associee a ce compte', 404);
             return null;

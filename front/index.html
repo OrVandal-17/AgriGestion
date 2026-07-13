@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Tableau de bord — AGRI-TOGO</title>
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="assets/css/style.css" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
@@ -12,6 +12,7 @@
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     />
+    <script src="assets/js/api.js"></script>
   </head>
   <body>
     <div class="sidebar">
@@ -23,24 +24,24 @@
         <nav>
           <ul>
             <p>Menu Principal</p>
-            <li><a href="index.html"><i class="fa-solid fa-house"></i>Tableau de bord</a></li>
-            <li><a href="agriculture.html"><i class="fa-solid fa-circle-user"></i>Agriculteurs</a></li>
-            <li><a href="gestionparcelles.html"><i class="fa-solid fa-road-spikes"></i>Parcelles</a></li>
-            <li><a href="cultures.html"><i class="fa-solid fa-seedling"></i>Cultures</a></li>
-            <li><a href="intrants.html"><i class="fa-solid fa-dumpster"></i>Intrants</a></li>
-            <li><a href="recolte.html"><i class="fa-solid fa-wheat-awn"></i>Récoltes</a></li>
-            <li><a href="saisons.html"><i class="fa-solid fa-wind"></i>Saisons</a></li>
-            <li><a href="zones.html"><i class="fa-solid fa-location-dot"></i>Zones Agroécologiques</a></li>
-            <li><a href="cooperatives.html"><i class="fa-solid fa-globe"></i>Coopératives</a></li>
-            <li><a href="utilisateurs.html"><i class="fa-solid fa-users"></i>Utilisateurs</a></li>
-            <li><a href="rapport.html"><i class="fa-solid fa-book"></i>Rapports</a></li>
+            <li data-roles="Agriculteur"><a href="index.html"><i class="fa-solid fa-house"></i>Tableau de bord</a></li>
+
+            <li data-roles="Administrateur"><a href="pages/agriculture.html"><i class="fa-solid fa-circle-user"></i>Agriculteurs</a></li>
+            <li data-roles="Administrateur"><a href="pages/gestionparcelles.html"><i class="fa-solid fa-road-spikes"></i>Parcelles</a></li>
+
+            <li data-roles="Agriculteur"><a href="pages/exploitation.html"><i class="fa-solid fa-tractor"></i>Exploitation</a></li>
+
+            <li><a href="pages/cultures.html"><i class="fa-solid fa-seedling"></i>Cultures</a></li>
+            <li><a href="pages/intrants.html"><i class="fa-solid fa-dumpster"></i>Intrants</a></li>
+            <li><a href="pages/saisons.html"><i class="fa-solid fa-wind"></i>Saisons</a></li>
+            <li><a href="pages/zones.html"><i class="fa-solid fa-location-dot"></i>Zones Agroécologiques</a></li>
+            <li><a href="pages/cooperatives.html"><i class="fa-solid fa-globe"></i>Coopératives</a></li>
+
+            <li data-roles="Administrateur"><a href="pages/utilisateurs.html"><i class="fa-solid fa-users"></i>Utilisateurs</a></li>
+            <li data-roles="Responsable"><a href="pages/rapport.html"><i class="fa-solid fa-book"></i>Rapports</a></li>
           </ul>
           <ul>
-            <p>Paramètres</p>
-            <li class="para"><a href="parametres.html"><i class="fa-solid fa-gear"></i>Paramètres</a></li>
-          </ul>
-          <ul>
-            <li class="para"><a href="connexion.html"><i class="fa-solid fa-right-from-bracket"></i>Déconnexion</a></li>
+            <li class="para"><a href="#" onclick="Api.logout(); return false;"><i class="fa-solid fa-right-from-bracket"></i>Déconnexion</a></li>
           </ul>
         </nav>
       </div>
@@ -51,62 +52,85 @@
         <i class="fa-solid fa-bars-staggered" id="menuToggle"></i>
         <i class="fa-solid fa-bell" id="bells"></i>
       </div>
-      <div class="profil"></div>
+      <div class="profil" id="profilBadge" title=""></div>
     </div>
     <div class="contenu">
       <div style="width:100%;max-width:1200px;">
-      <h3>Tableau de bord</h3>
+      <h3 id="dashTitle">Tableau de bord</h3>
 
-      <div class="cards">
-        <div class="card">
-          <div class="card-content">
-            <i class="fa-solid fa-user"></i>
-            <h3>126</h3>
-            <p>Agriculteurs</p>
-            <p><span>+12 ce mois</span></p>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-content">
-            <i class="fa-solid fa-road-spikes"></i>
-            <h3>256</h3>
-            <p>Parcelles</p>
-            <p><span>+18 ce mois</span></p>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-content">
-            <i class="fa-solid fa-seedling"></i>
-            <h3>26</h3>
-            <p>Cultures en cours</p>
-            <p><span>+5 ce mois</span></p>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-content">
-            <i class="fa-solid fa-dumpster"></i>
-            <h3>12</h3>
-            <p>Intrants utilisés</p>
-            <p><span>+7 ce mois</span></p>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-content">
-            <i class="fa-solid fa-wheat-awn"></i>
-            <h3>152</h3>
-            <p>Récoltes enregistrées</p>
-            <p><span>+20 ce mois</span></p>
-          </div>
-        </div>
-      </div>
-
-      <div class="charto">
-        <canvas id="myChart"></canvas>
+      <div class="cards" id="dashCards">
+        <div class="card"><div class="card-content"><p style="color:var(--gray)">Chargement...</p></div></div>
       </div>
       </div>
     </div>
-    <script src="app.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.5.0/chart.js" integrity="sha512-y5GdcvG8/LoqZllcaDnZKY4hKSDowG4vWAytStZ1AZ8sxgWke7KtkMx3G9KQU0Ih3kIDfY/3EO1sSyKGRxqwJQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="myChart.js"></script>
+
+    <script>
+      const currentUser = Api.requireAuth([]);
+
+      function carte(icon, valeur, label) {
+        return '<div class="card"><div class="card-content"><i class="fa-solid ' + icon + '"></i><h3>' + valeur + '</h3><p>' + label + '</p></div></div>';
+      }
+
+      // NOTE : les appels sont volontairement séquentiels (un `await` après
+      // l'autre) plutôt qu'en parallèle (Promise.all). Le backend ouvre une
+      // nouvelle connexion MySQL par requête (pas de pool), et beaucoup
+      // d'hébergements mutualisés limitent le nombre de connexions
+      // simultanées à quelques unités. Le tableau de bord Administrateur
+      // fait 5 appels : en parallèle, cela peut dépasser cette limite et
+      // faire échouer aléatoirement l'un des appels avec l'erreur
+      // "Connexion base de données impossible", même si tout le reste de
+      // l'application (qui appelle l'API un endpoint à la fois) fonctionne.
+      async function chargerDashboardAdmin() {
+        const agris = await Api.get("/agriculteurs");
+        const parcelles = await Api.get("/parcelles");
+        const cultures = await Api.get("/cultures");
+        const intrants = await Api.get("/intrants");
+        const coops = await Api.get("/cooperatives");
+        document.getElementById("dashCards").innerHTML =
+          carte("fa-user", agris.length, "Agriculteurs") +
+          carte("fa-road-spikes", parcelles.length, "Parcelles") +
+          carte("fa-seedling", cultures.length, "Cultures référencées") +
+          carte("fa-dumpster", intrants.length, "Intrants référencés") +
+          carte("fa-globe", coops.length, "Coopératives");
+      }
+
+      async function chargerDashboardAgriculteur() {
+        const parcelles = await Api.get("/mes-parcelles");
+        const recoltes = await Api.get("/recoltes");
+        const mises = await Api.get("/exploitations");
+        const utilisations = await Api.get("/intrants-utilises");
+        document.getElementById("dashCards").innerHTML =
+          carte("fa-road-spikes", parcelles.length, "Mes parcelles") +
+          carte("fa-seedling", mises.length, "Mises en culture") +
+          carte("fa-dumpster", utilisations.length, "Intrants utilisés") +
+          carte("fa-wheat-awn", recoltes.length, "Récoltes enregistrées");
+      }
+
+      async function chargerDashboardResponsable() {
+        const bilan = await Api.get("/bilan-production");
+        const agris = await Api.get("/agriculteurs-cooperative");
+        document.getElementById("dashCards").innerHTML =
+          carte("fa-users", agris.length, "Agriculteurs de ma coopérative") +
+          carte("fa-wheat-awn", (bilan.total_rendement || 0) + " kg", "Rendement total") +
+          carte("fa-coins", (bilan.total_cout || 0) + " FCFA", "Coût total") +
+          carte("fa-list", bilan.nombre_recoltes || 0, "Récoltes enregistrées");
+      }
+
+      async function chargerDashboard() {
+        document.getElementById("dashTitle").textContent =
+          "Bonjour " + (currentUser.Prenom || "") + " — Tableau de bord";
+        try {
+          if (currentUser.Role === "Administrateur") await chargerDashboardAdmin();
+          else if (currentUser.Role === "Agriculteur") await chargerDashboardAgriculteur();
+          else if (currentUser.Role === "Responsable") await chargerDashboardResponsable();
+        } catch (err) {
+          document.getElementById("dashCards").innerHTML =
+            '<div class="card"><div class="card-content"><p style="color:var(--danger)">' + err.message + '</p></div></div>';
+        }
+      }
+
+      chargerDashboard();
+    </script>
+    <script src="assets/js/app.js"></script>
   </body>
 </html>

@@ -58,6 +58,30 @@ Le reste du schéma : `Cooperative`, `Culture`, `ZoneAgroEcologique`,
 une `Exploitation`) et `Utiliser` (association `Intrant` ↔ `Exploitation`,
 clé composite).
 
+### Codification des identifiants
+
+Plus d'auto-increment sur les clés primaires : chaque table utilise un code
+alphanumérique `PREFIXE-XXXXXX` (varchar(12), 6 caractères après le préfixe,
+alphabet `23456789ABCDEFGHJKMNPQRSTUVWXYZ` — sans `0/O/1/I/L` pour éviter les
+confusions à la lecture). Le code est généré côté backend (`Model::create()`)
+au moment de l'insertion, jamais par MySQL.
+
+| Table | Préfixe | Exemple |
+|---|---|---|
+| `utilisateur` | `USR` | `USR-7WDUH6` |
+| `cooperative` | `COO` | `COO-5P5BX6` |
+| `culture` | `CUL` | `CUL-QP7GU5` |
+| `zone_agroecologique` | `ZAE` | `ZAE-FMKRMY` |
+| `intrant` | `INT` | `INT-SJM5MS` |
+| `saison` | `SAI` | `SAI-EE3FFT` |
+| `parcelle` | `PAR` | `PAR-NAJ3KY` |
+| `exploitation` | `EXP` | `EXP-347H63` |
+| `recolte` | `REC` | `REC-P9S2HC` |
+
+`administrateur`, `responsable` et `agriculteur` n'ont pas de préfixe propre :
+leur `IdUtil` reprend tel quel le code généré dans `utilisateur` (héritage,
+PK = FK).
+
 ---
 
 ## 3. Installation
@@ -152,7 +176,7 @@ curl http://localhost/mes-parcelles \
 
 curl -X POST http://localhost/exploitations \
   -H "Authorization: Bearer <token>" -H "Content-Type: application/json" \
-  -d '{"IdParcelle":1,"IdCulture":3,"IdSaison":2,"DateDebut":"2026-06-01"}'
+  -d '{"IdParcelle":"PAR-NAJ3KY","IdCulture":"CUL-QP7GU5","IdSaison":"SAI-EE3FFT","DateDebut":"2026-06-01"}'
 ```
 
 ---

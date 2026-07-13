@@ -28,12 +28,12 @@ class UtilisationController
             return;
         }
 
-        $idExploitation = (int) $request->input('IdExploitation');
-        $idIntrant = (int) $request->input('IdIntrant');
+        $idExploitation = $request->input('IdExploitation');
+        $idIntrant = $request->input('IdIntrant');
         $quantite = $request->input('Quantite');
         $date = $request->input('DateUtil', date('Y-m-d'));
 
-        if (!$idExploitation || !$idIntrant) {
+        if (empty($idExploitation) || empty($idIntrant)) {
             Response::error('IdExploitation et IdIntrant sont requis', 422);
             return;
         }
@@ -59,9 +59,9 @@ class UtilisationController
         ], 201);
     }
 
-    private static function currentAgriculteur(Request $request): ?int
+    private static function currentAgriculteur(Request $request): ?string
     {
-        $idUtil = (int) $request->user['sub'];
+        $idUtil = $request->user['sub'];
         if (!Agriculteur::findByUtilisateur($idUtil)) {
             Response::error('Aucune fiche agriculteur associee a ce compte', 404);
             return null;

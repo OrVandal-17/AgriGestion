@@ -15,7 +15,7 @@ class Utilisation extends Model
     protected static string $table = 'utiliser';
     protected static string $primaryKey = 'IdExploitation';
 
-    public static function historiqueAgriculteur(int $idUtil): array
+    public static function historiqueAgriculteur(string $idUtil): array
     {
         $stmt = static::db()->prepare(
             'SELECT u.*, i.NomIntrant, i.Unite, p.Localisation

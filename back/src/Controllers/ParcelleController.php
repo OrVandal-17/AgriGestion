@@ -24,7 +24,7 @@ class ParcelleController extends CrudController
      */
     public static function mine(Request $request): void
     {
-        $idUtil = (int) $request->user['sub'];
+        $idUtil = $request->user['sub'];
         if (!Agriculteur::findByUtilisateur($idUtil)) {
             Response::error('Aucune fiche agriculteur associee a ce compte', 404);
             return;

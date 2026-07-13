@@ -6,4 +6,5 @@ class Culture extends Model
 {
     protected static string $table = 'culture';
     protected static string $primaryKey = 'IdCulture';
+    protected static ?string $prefix = 'CUL';
 }

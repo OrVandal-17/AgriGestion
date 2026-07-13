@@ -7,6 +7,17 @@
 --   Utilisateur dans les 3 tables de rôle), Cooperative, Culture,
 --   ZoneAgroEcologique, Intrant, Saison, Parcelle, Exploitation
 --   (anciennement "mise_en_culture"), Recolte, Utiliser.
+--
+-- Codification des identifiants :
+--   Plus d'auto-increment sur les cles primaires : chaque table utilise un
+--   code alphanumerique "PREFIXE-XXXXXX" (6 caracteres apres le prefixe,
+--   alphabet sans caracteres ambigus 0/O/1/I/L). Le code est genere cote
+--   backend (voir Model::create()) au moment de l'insertion.
+--   Prefixes retenus : USR (utilisateur), COO (cooperative), CUL (culture),
+--   ZAE (zone_agroecologique), INT (intrant), SAI (saison), PAR (parcelle),
+--   EXP (exploitation), REC (recolte).
+--   Administrateur / Responsable / Agriculteur n'ont pas de prefixe propre :
+--   ils reprennent tel quel le code IdUtil de l'utilisateur (heritage, PK = FK).
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -26,7 +37,7 @@ SET time_zone = "+00:00";
 
 DROP TABLE IF EXISTS `utilisateur`;
 CREATE TABLE IF NOT EXISTS `utilisateur` (
-  `IdUtil` int NOT NULL AUTO_INCREMENT,
+  `IdUtil` varchar(12) COLLATE utf8mb4_general_ci NOT NULL,
   `Nom` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
   `Prenom` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
   `Tel` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL,
@@ -36,16 +47,16 @@ CREATE TABLE IF NOT EXISTS `utilisateur` (
   `PassHash` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`IdUtil`),
   UNIQUE KEY `Email` (`Email`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Déchargement des données de la table `utilisateur`
 --
 
 INSERT INTO `utilisateur` (`IdUtil`, `Nom`, `Prenom`, `Tel`, `Email`, `DateNaissance`, `Sexe`, `PassHash`) VALUES
-(1, 'Koffi', 'Systeme', NULL, 'admin@agrigestion.tg', NULL, NULL, '$2b$10$PL0BRX1ENbQNMyKX.mRUROZt1eEIoW9WEP/JPJnoOU6YQROYiCiOK'),
-(2, 'Amegan', 'Koffi', '91112233', 'ama@ex.tg', NULL, 'M', '$2y$10$6zKkXabOJ5t2qONhqLK/bupPeMGKXsOo56blEDzcK19o49EJTQz..'),
-(3, 'Mensah', 'Afi', '90112233', 'responsable@ex.tg', NULL, 'F', '$2y$10$6zKkXabOJ5t2qONhqLK/bupPeMGKXsOo56blEDzcK19o49EJTQz..');
+('USR-HZCT6D', 'Koffi', 'Systeme', NULL, 'admin@agrigestion.tg', NULL, NULL, '$2b$10$PL0BRX1ENbQNMyKX.mRUROZt1eEIoW9WEP/JPJnoOU6YQROYiCiOK'),
+('USR-7WDUH6', 'Amegan', 'Koffi', '91112233', 'ama@ex.tg', NULL, 'M', '$2y$10$6zKkXabOJ5t2qONhqLK/bupPeMGKXsOo56blEDzcK19o49EJTQz..'),
+('USR-7PK5X6', 'Mensah', 'Afi', '90112233', 'responsable@ex.tg', NULL, 'F', '$2y$10$6zKkXabOJ5t2qONhqLK/bupPeMGKXsOo56blEDzcK19o49EJTQz..');
 
 -- --------------------------------------------------------
 
@@ -55,19 +66,19 @@ INSERT INTO `utilisateur` (`IdUtil`, `Nom`, `Prenom`, `Tel`, `Email`, `DateNaiss
 
 DROP TABLE IF EXISTS `culture`;
 CREATE TABLE IF NOT EXISTS `culture` (
-  `IdCulture` int NOT NULL AUTO_INCREMENT,
+  `IdCulture` varchar(12) COLLATE utf8mb4_general_ci NOT NULL,
   `NomCulture` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
   `TypeCulture` varchar(30) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `DureeCycle` int DEFAULT NULL,
   PRIMARY KEY (`IdCulture`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Déchargement des données de la table `culture`
 --
 
 INSERT INTO `culture` (`IdCulture`, `NomCulture`, `TypeCulture`, `DureeCycle`) VALUES
-(1, 'Mais', 'Cereale', 90);
+('CUL-QP7GU5', 'Mais', 'Cereale', 90);
 
 -- --------------------------------------------------------
 
@@ -77,19 +88,19 @@ INSERT INTO `culture` (`IdCulture`, `NomCulture`, `TypeCulture`, `DureeCycle`) V
 
 DROP TABLE IF EXISTS `zone_agroecologique`;
 CREATE TABLE IF NOT EXISTS `zone_agroecologique` (
-  `IdZone` int NOT NULL AUTO_INCREMENT,
+  `IdZone` varchar(12) COLLATE utf8mb4_general_ci NOT NULL,
   `NomZone` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
   `Region` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `Description` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
   PRIMARY KEY (`IdZone`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Déchargement des données de la table `zone_agroecologique`
 --
 
 INSERT INTO `zone_agroecologique` (`IdZone`, `NomZone`, `Region`, `Description`) VALUES
-(1, 'Zone soudanienne', 'Savanes', NULL);
+('ZAE-FMKRMY', 'Zone soudanienne', 'Savanes', NULL);
 
 -- --------------------------------------------------------
 
@@ -99,20 +110,20 @@ INSERT INTO `zone_agroecologique` (`IdZone`, `NomZone`, `Region`, `Description`)
 
 DROP TABLE IF EXISTS `intrant`;
 CREATE TABLE IF NOT EXISTS `intrant` (
-  `IdIntrant` int NOT NULL AUTO_INCREMENT,
+  `IdIntrant` varchar(12) COLLATE utf8mb4_general_ci NOT NULL,
   `NomIntrant` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
   `TypeIntrant` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `Unite` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `PrixUnitaire` decimal(10,2) DEFAULT NULL,
   PRIMARY KEY (`IdIntrant`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Déchargement des données de la table `intrant`
 --
 
 INSERT INTO `intrant` (`IdIntrant`, `NomIntrant`, `TypeIntrant`, `Unite`, `PrixUnitaire`) VALUES
-(1, 'Uree', 'Engrais', 'kg', 350.00);
+('INT-SJM5MS', 'Uree', 'Engrais', 'kg', 350.00);
 
 -- --------------------------------------------------------
 
@@ -122,19 +133,19 @@ INSERT INTO `intrant` (`IdIntrant`, `NomIntrant`, `TypeIntrant`, `Unite`, `PrixU
 
 DROP TABLE IF EXISTS `saison`;
 CREATE TABLE IF NOT EXISTS `saison` (
-  `IdSaison` int NOT NULL AUTO_INCREMENT,
+  `IdSaison` varchar(12) COLLATE utf8mb4_general_ci NOT NULL,
   `Libelle` varchar(30) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `DateDebut` date DEFAULT NULL,
   `DateFin` date DEFAULT NULL,
   PRIMARY KEY (`IdSaison`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Déchargement des données de la table `saison`
 --
 
 INSERT INTO `saison` (`IdSaison`, `Libelle`, `DateDebut`, `DateFin`) VALUES
-(1, 'Saison des pluies 2026', '2026-04-01', '2026-09-30');
+('SAI-EE3FFT', 'Saison des pluies 2026', '2026-04-01', '2026-09-30');
 
 -- --------------------------------------------------------
 
@@ -144,36 +155,37 @@ INSERT INTO `saison` (`IdSaison`, `Libelle`, `DateDebut`, `DateFin`) VALUES
 
 DROP TABLE IF EXISTS `cooperative`;
 CREATE TABLE IF NOT EXISTS `cooperative` (
-  `IdCoop` int NOT NULL AUTO_INCREMENT,
+  `IdCoop` varchar(12) COLLATE utf8mb4_general_ci NOT NULL,
   `NomCoop` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
   `AdresseCoop` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `EmailCoop` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
   PRIMARY KEY (`IdCoop`),
   UNIQUE KEY `EmailCoop` (`EmailCoop`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Déchargement des données de la table `cooperative`
 --
 
 INSERT INTO `cooperative` (`IdCoop`, `NomCoop`, `AdresseCoop`, `EmailCoop`) VALUES
-(1, 'Coop du Plateau', 'Kpalime', 'coop@ex.tg');
+('COO-5P5BX6', 'Coop du Plateau', 'Kpalime', 'coop@ex.tg');
 
 -- --------------------------------------------------------
 
 --
 -- Structure de la table `administrateur`
--- (spécialisation de `utilisateur` : IdUtil est à la fois PK et FK)
+-- (spécialisation de `utilisateur` : IdUtil est à la fois PK et FK,
+-- meme code alphanumerique que dans `utilisateur`)
 --
 
 DROP TABLE IF EXISTS `administrateur`;
 CREATE TABLE IF NOT EXISTS `administrateur` (
-  `IdUtil` int NOT NULL,
+  `IdUtil` varchar(12) COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`IdUtil`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 INSERT INTO `administrateur` (`IdUtil`) VALUES
-(1);
+('USR-HZCT6D');
 
 -- --------------------------------------------------------
 
@@ -184,14 +196,14 @@ INSERT INTO `administrateur` (`IdUtil`) VALUES
 
 DROP TABLE IF EXISTS `responsable`;
 CREATE TABLE IF NOT EXISTS `responsable` (
-  `IdUtil` int NOT NULL,
-  `IdCoop` int DEFAULT NULL,
+  `IdUtil` varchar(12) COLLATE utf8mb4_general_ci NOT NULL,
+  `IdCoop` varchar(12) COLLATE utf8mb4_general_ci DEFAULT NULL,
   PRIMARY KEY (`IdUtil`),
   KEY `IdCoop` (`IdCoop`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 INSERT INTO `responsable` (`IdUtil`, `IdCoop`) VALUES
-(3, 1);
+('USR-7PK5X6', 'COO-5P5BX6');
 
 -- --------------------------------------------------------
 
@@ -202,14 +214,14 @@ INSERT INTO `responsable` (`IdUtil`, `IdCoop`) VALUES
 
 DROP TABLE IF EXISTS `agriculteur`;
 CREATE TABLE IF NOT EXISTS `agriculteur` (
-  `IdUtil` int NOT NULL,
-  `IdCoop` int DEFAULT NULL,
+  `IdUtil` varchar(12) COLLATE utf8mb4_general_ci NOT NULL,
+  `IdCoop` varchar(12) COLLATE utf8mb4_general_ci DEFAULT NULL,
   PRIMARY KEY (`IdUtil`),
   KEY `IdCoop` (`IdCoop`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 INSERT INTO `agriculteur` (`IdUtil`, `IdCoop`) VALUES
-(2, 1);
+('USR-7WDUH6', 'COO-5P5BX6');
 
 -- --------------------------------------------------------
 
@@ -219,23 +231,23 @@ INSERT INTO `agriculteur` (`IdUtil`, `IdCoop`) VALUES
 
 DROP TABLE IF EXISTS `parcelle`;
 CREATE TABLE IF NOT EXISTS `parcelle` (
-  `IdParcelle` int NOT NULL AUTO_INCREMENT,
+  `IdParcelle` varchar(12) COLLATE utf8mb4_general_ci NOT NULL,
   `Superficie` decimal(8,2) DEFAULT NULL,
   `Localisation` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `EtatParcelle` varchar(30) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `IdZone` int DEFAULT NULL,
-  `IdUtil` int DEFAULT NULL,
+  `IdZone` varchar(12) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `IdUtil` varchar(12) COLLATE utf8mb4_general_ci DEFAULT NULL,
   PRIMARY KEY (`IdParcelle`),
   KEY `IdZone` (`IdZone`),
   KEY `IdUtil` (`IdUtil`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Déchargement des données de la table `parcelle`
 --
 
 INSERT INTO `parcelle` (`IdParcelle`, `Superficie`, `Localisation`, `EtatParcelle`, `IdZone`, `IdUtil`) VALUES
-(1, 1.50, 'Zone Nord', 'En culture', 1, 2);
+('PAR-NAJ3KY', 1.50, 'Zone Nord', 'En culture', 'ZAE-FMKRMY', 'USR-7WDUH6');
 
 -- --------------------------------------------------------
 
@@ -247,13 +259,13 @@ INSERT INTO `parcelle` (`IdParcelle`, `Superficie`, `Localisation`, `EtatParcell
 
 DROP TABLE IF EXISTS `exploitation`;
 CREATE TABLE IF NOT EXISTS `exploitation` (
-  `IdExploitation` int NOT NULL AUTO_INCREMENT,
+  `IdExploitation` varchar(12) COLLATE utf8mb4_general_ci NOT NULL,
   `DateDebut` date DEFAULT NULL,
   `DateFin` date DEFAULT NULL,
   `Etat` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `IdSaison` int DEFAULT NULL,
-  `IdCulture` int DEFAULT NULL,
-  `IdParcelle` int DEFAULT NULL,
+  `IdSaison` varchar(12) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `IdCulture` varchar(12) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `IdParcelle` varchar(12) COLLATE utf8mb4_general_ci DEFAULT NULL,
   PRIMARY KEY (`IdExploitation`),
   KEY `IdSaison` (`IdSaison`),
   KEY `IdCulture` (`IdCulture`),
@@ -268,12 +280,12 @@ CREATE TABLE IF NOT EXISTS `exploitation` (
 
 DROP TABLE IF EXISTS `recolte`;
 CREATE TABLE IF NOT EXISTS `recolte` (
-  `IdRecolte` int NOT NULL AUTO_INCREMENT,
+  `IdRecolte` varchar(12) COLLATE utf8mb4_general_ci NOT NULL,
   `DateRecolte` date NOT NULL,
   `Rendement` decimal(10,2) DEFAULT NULL,
   `Cout` decimal(12,2) DEFAULT NULL,
   `Observation` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `IdExploitation` int DEFAULT NULL,
+  `IdExploitation` varchar(12) COLLATE utf8mb4_general_ci DEFAULT NULL,
   PRIMARY KEY (`IdRecolte`),
   KEY `IdExploitation` (`IdExploitation`),
   KEY `idx_recolte_date` (`DateRecolte`)
@@ -288,8 +300,8 @@ CREATE TABLE IF NOT EXISTS `recolte` (
 
 DROP TABLE IF EXISTS `utiliser`;
 CREATE TABLE IF NOT EXISTS `utiliser` (
-  `IdIntrant` int NOT NULL,
-  `IdExploitation` int NOT NULL,
+  `IdIntrant` varchar(12) COLLATE utf8mb4_general_ci NOT NULL,
+  `IdExploitation` varchar(12) COLLATE utf8mb4_general_ci NOT NULL,
   `DateUtil` date NOT NULL,
   `Quantite` decimal(10,2) DEFAULT NULL,
   PRIMARY KEY (`IdIntrant`, `IdExploitation`, `DateUtil`),

@@ -17,7 +17,7 @@ class UtilisateurController
         $rows = Utilisateur::all('Nom');
         foreach ($rows as &$row) {
             unset($row['PassHash']);
-            $roleInfo = Utilisateur::determineRole((int) $row['IdUtil']);
+            $roleInfo = Utilisateur::determineRole($row['IdUtil']);
             $row['Role'] = $roleInfo['role'] ?? null;
             $row['IdCoop'] = $roleInfo['coop'] ?? null;
         }
@@ -33,7 +33,7 @@ class UtilisateurController
             return;
         }
         unset($row['PassHash']);
-        $roleInfo = Utilisateur::determineRole((int) $row['IdUtil']);
+        $roleInfo = Utilisateur::determineRole($row['IdUtil']);
         $row['Role'] = $roleInfo['role'] ?? null;
         $row['IdCoop'] = $roleInfo['coop'] ?? null;
         Response::json($row);
@@ -73,7 +73,7 @@ class UtilisateurController
             'PassHash' => password_hash($body['MotPasse'], PASSWORD_BCRYPT),
         ]);
 
-        $idCoop = (!empty($body['IdCoop'])) ? (int) $body['IdCoop'] : null;
+        $idCoop = !empty($body['IdCoop']) ? $body['IdCoop'] : null;
         Utilisateur::attachRole($idUtil, $body['Role'], $idCoop);
 
         $row = Utilisateur::find($idUtil);
@@ -85,7 +85,7 @@ class UtilisateurController
 
     public static function update(Request $request): void
     {
-        $id = (int) $request->params['id'];
+        $id = $request->params['id'];
         if (!Utilisateur::find($id)) {
             Response::error('Utilisateur introuvable', 404);
             return;
@@ -110,7 +110,7 @@ class UtilisateurController
             if ($current && $current['role'] !== $body['Role']) {
                 Utilisateur::detachRole($id, $current['role']);
             }
-            $idCoop = (!empty($body['IdCoop'])) ? (int) $body['IdCoop'] : null;
+            $idCoop = !empty($body['IdCoop']) ? $body['IdCoop'] : null;
             Utilisateur::attachRole($id, $body['Role'], $idCoop);
         } elseif (array_key_exists('IdCoop', $body)) {
             $current = Utilisateur::determineRole($id);
@@ -132,7 +132,7 @@ class UtilisateurController
 
     public static function destroy(Request $request): void
     {
-        $id = (int) $request->params['id'];
+        $id = $request->params['id'];
         if (!Utilisateur::find($id)) {
             Response::error('Utilisateur introuvable', 404);
             return;

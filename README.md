@@ -35,6 +35,17 @@ une `Saison` données) et enfin `Recolte` et `Utiliser`, tous deux rattachés
 Le script SQL correspondant se trouve dans `back/database/gestion_agricole_togo.sql`
 et les diagrammes de conception dans `docs/` (MCD, MLD, cas d'utilisation).
 
+### Codification des identifiants
+
+Aucune clé primaire n'est en auto-increment : chaque table utilise un code
+alphanumérique `PREFIXE-XXXXXX` (6 caractères après le préfixe, alphabet sans
+caractères ambigus `0/O/1/I/L`), généré côté backend à l'insertion. Exemples :
+`USR-7WDUH6` (utilisateur), `PAR-NAJ3KY` (parcelle), `EXP-347H63`
+(exploitation). `Administrateur`, `Responsable` et `Agriculteur` n'ont pas de
+préfixe propre : ils reprennent le code `IdUtil` de l'utilisateur dont ils
+sont la spécialisation (héritage, PK = FK). Détail des préfixes par table
+dans `back/README.md`.
+
 ## Démarrage rapide
 
 Le backend est un projet PHP autonome (sans dépendance Composer) — voir
@@ -65,8 +76,13 @@ Compte administrateur par défaut (issu du script SQL) :
 Une interface de test des routes (`back/public/test-interface.html`) est
 fournie pour exercer l'API sans outil externe (type Postman).
 
-Le dossier `front/` contient une maquette statique de tableau de bord
-(HTML/CSS/JS + Chart.js) et n'est pas encore branché sur l'API.
+Le dossier `front/` contient l'interface (HTML/CSS/JS), organisée ainsi :
+`front/index.html` et `front/connexion.html` à la racine, les autres pages
+dans `front/pages/`, et les fichiers partagés (CSS/JS) dans `front/assets/`.
+Le tout est branché sur l'API via `front/assets/js/api.js` (client centralisé : token JWT, appels authentifiés,
+protection des pages par rôle). Par défaut il pointe vers
+`http://localhost/AgriGestion/back/public` — adaptez `DEFAULT_BASE_URL`
+dans `api.js` selon votre installation.
 
 ## Sécurité
 

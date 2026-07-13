@@ -6,8 +6,9 @@ class Parcelle extends Model
 {
     protected static string $table = 'parcelle';
     protected static string $primaryKey = 'IdParcelle';
+    protected static ?string $prefix = 'PAR';
 
-    public static function byAgriculteur(int $idUtil): array
+    public static function byAgriculteur(string $idUtil): array
     {
         return static::where('IdUtil', $idUtil, 'IdParcelle DESC');
     }
@@ -16,7 +17,7 @@ class Parcelle extends Model
      * Verifie que la parcelle appartient bien a l'agriculteur donne
      * (controle d'acces pour toutes les saisies).
      */
-    public static function belongsToAgriculteur(int $idParcelle, int $idUtil): bool
+    public static function belongsToAgriculteur(string $idParcelle, string $idUtil): bool
     {
         $stmt = static::db()->prepare('SELECT 1 FROM parcelle WHERE IdParcelle = ? AND IdUtil = ?');
         $stmt->execute([$idParcelle, $idUtil]);

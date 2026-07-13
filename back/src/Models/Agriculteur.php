@@ -19,7 +19,7 @@ class Agriculteur extends Model
      * connecte (simple recherche par cle primaire, puisque IdUtil est
      * partage entre les deux tables).
      */
-    public static function findByUtilisateur(int $idUtil): ?array
+    public static function findByUtilisateur(string $idUtil): ?array
     {
         return static::find($idUtil);
     }
@@ -27,7 +27,7 @@ class Agriculteur extends Model
     /**
      * Fiche complete d'un agriculteur (jointure utilisateur + agriculteur).
      */
-    public static function withProfile(int $idUtil): ?array
+    public static function withProfile(string $idUtil): ?array
     {
         $stmt = static::db()->prepare(
             'SELECT u.IdUtil, u.Nom, u.Prenom, u.Tel, u.Email, u.DateNaissance, u.Sexe, a.IdCoop
@@ -57,7 +57,7 @@ class Agriculteur extends Model
      * Liste des agriculteurs d'une cooperative donnee, avec leurs
      * informations personnelles.
      */
-    public static function byCooperative(int $idCoop): array
+    public static function byCooperative(string $idCoop): array
     {
         $stmt = static::db()->prepare(
             'SELECT u.IdUtil, u.Nom, u.Prenom, u.Tel, u.Email, u.DateNaissance, u.Sexe, a.IdCoop

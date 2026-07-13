@@ -34,4 +34,23 @@ document.addEventListener("DOMContentLoaded", function () {
       link.classList.add("active");
     }
   });
+
+  // ===== Menu filtré par rôle + badge profil (si Api est chargé) =====
+  if (typeof Api !== "undefined") {
+    Api.applyRoleMenu();
+    const user = Api.getUser();
+    const badge = document.getElementById("profilBadge");
+    if (user && badge) {
+      const initials = ((user.Prenom || "")[0] || "") + ((user.Nom || "")[0] || "");
+      badge.textContent = initials.toUpperCase();
+      badge.title = (user.Prenom || "") + " " + (user.Nom || "") + " — " + user.Role;
+      badge.style.display = "flex";
+      badge.style.alignItems = "center";
+      badge.style.justifyContent = "center";
+      badge.style.fontSize = "12px";
+      badge.style.fontWeight = "700";
+      badge.style.color = "#fff";
+    }
+  }
 });
+

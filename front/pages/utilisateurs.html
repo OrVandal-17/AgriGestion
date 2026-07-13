@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Utilisateurs — AGRI-TOGO</title>
+    <link rel="stylesheet" href="../assets/css/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+      integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <script src="../assets/js/api.js"></script>
+  </head>
+  <body>
+    <div class="sidebar">
+      <div class="logo">
+        <h1>AGRI-TOGO</h1>
+        <p>Plateforme de gestion agricole</p>
+      </div>
+      <div class="accueil">
+        <nav>
+          <ul>
+            <p>Menu Principal</p>
+            <li data-roles="Agriculteur"><a href="../index.html"><i class="fa-solid fa-house"></i>Tableau de bord</a></li>
+
+            <li data-roles="Administrateur"><a href="agriculture.html"><i class="fa-solid fa-circle-user"></i>Agriculteurs</a></li>
+            <li data-roles="Administrateur"><a href="gestionparcelles.html"><i class="fa-solid fa-road-spikes"></i>Parcelles</a></li>
+
+            <li data-roles="Agriculteur"><a href="exploitation.html"><i class="fa-solid fa-tractor"></i>Exploitation</a></li>
+
+            <li><a href="cultures.html"><i class="fa-solid fa-seedling"></i>Cultures</a></li>
+            <li><a href="intrants.html"><i class="fa-solid fa-dumpster"></i>Intrants</a></li>
+            <li><a href="saisons.html"><i class="fa-solid fa-wind"></i>Saisons</a></li>
+            <li><a href="zones.html"><i class="fa-solid fa-location-dot"></i>Zones Agroécologiques</a></li>
+            <li><a href="cooperatives.html"><i class="fa-solid fa-globe"></i>Coopératives</a></li>
+
+            <li data-roles="Administrateur"><a href="utilisateurs.html"><i class="fa-solid fa-users"></i>Utilisateurs</a></li>
+            <li data-roles="Responsable"><a href="rapport.html"><i class="fa-solid fa-book"></i>Rapports</a></li>
+          </ul>
+          <ul>
+            <li class="para"><a href="#" onclick="Api.logout(); return false;"><i class="fa-solid fa-right-from-bracket"></i>Déconnexion</a></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+    <div class="sidebar-backdrop"></div>
+    <div class="topbar">
+      <div class="icon">
+        <i class="fa-solid fa-bars-staggered" id="menuToggle"></i>
+        <i class="fa-solid fa-bell" id="bells"></i>
+      </div>
+      <div class="profil" id="profilBadge" title=""></div>
+    </div>
+    <section class="page" id="utilisateurs">
+      <div class="page-head">
+        <div>
+          <div class="eyebrow">Administration</div>
+          <h2>Gestion des utilisateurs</h2>
+          <p>Gérez les comptes ayant accès à la plateforme et leurs rôles respectifs.</p>
+        </div>
+        <a href="ajoutUtilisateur.html" class="btn btn-primary"><i class="fa-solid fa-plus"></i>Ajouter un utilisateur</a>
+      </div>
+
+      <div class="cardy">
+        <div class="table-wrap">
+        <table>
+          <thead><tr><th>Utilisateur</th><th>Email</th><th>Téléphone</th><th>Rôle</th><th>Coopérative</th><th></th></tr></thead>
+          <tbody id="tableBody">
+            <tr><td colspan="6" style="text-align:center;color:var(--gray);padding:30px;">Chargement...</td></tr>
+          </tbody>
+        </table>
+        </div>
+      </div>
+    </section>
+
+    <script>
+      const currentUser = Api.requireAuth(["Administrateur"]);
+      let coopMap = {};
+
+      async function chargerListe() {
+        const tbody = document.getElementById("tableBody");
+        try {
+          const coops = await Api.get("/cooperatives");
+          coops.forEach(function (c) { coopMap[c.IdCoop] = c.NomCoop; });
+
+          const rows = await Api.get("/utilisateurs");
+          if (!rows.length) {
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--gray);padding:30px;">Aucun utilisateur.</td></tr>';
+            return;
+          }
+          tbody.innerHTML = rows.map(function (row) {
+            const initials = ((row.Prenom||"")[0]||"") + ((row.Nom||"")[0]||"");
+            return '<tr>' +
+              '<td><div class="cell-name"><div class="avatar-sq">' + initials.toUpperCase() + '</div>' + (row.Prenom||"") + ' ' + (row.Nom||"") + '</div></td>' +
+              '<td>' + (row.Email||"") + '</td>' +
+              '<td>' + (row.Tel||"—") + '</td>' +
+              '<td><span class="badge badge-green">' + row.Role + '</span></td>' +
+              '<td>' + (row.IdCoop ? (coopMap[row.IdCoop] || ("#" + row.IdCoop)) : "—") + '</td>' +
+              '<td><div class="row-actions"><button class="action-btn danger" onclick="supprimer(&quot;' + row.IdUtil + '&quot;)" title="Supprimer"><i class="fa-solid fa-trash"></i></button></div></td>' +
+              '</tr>';
+          }).join("");
+        } catch (err) {
+          tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--danger);padding:30px;">' + err.message + '</td></tr>';
+        }
+      }
+
+      async function supprimer(id) {
+        if (!confirm("Confirmer la suppression de cet utilisateur ?")) return;
+        try {
+          await Api.delete("/utilisateurs/" + id);
+          chargerListe();
+        } catch (err) {
+          alert("Erreur : " + err.message);
+        }
+      }
+
+      chargerListe();
+    </script>
+    <script src="../assets/js/app.js"></script>
+  </body>
+</html>

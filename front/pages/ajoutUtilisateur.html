@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ajouter un utilisateur — AGRI-TOGO</title>
+    <link rel="stylesheet" href="../assets/css/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+      integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <script src="../assets/js/api.js"></script>
+  </head>
+  <body>
+    <div class="sidebar">
+      <div class="logo">
+        <h1>AGRI-TOGO</h1>
+        <p>Plateforme de gestion agricole</p>
+      </div>
+      <div class="accueil">
+        <nav>
+          <ul>
+            <p>Menu Principal</p>
+            <li><a href="../index.html"><i class="fa-solid fa-house"></i>Tableau de bord</a></li>
+
+            <li data-roles="Administrateur"><a href="agriculture.html"><i class="fa-solid fa-circle-user"></i>Agriculteurs</a></li>
+            <li data-roles="Administrateur"><a href="gestionparcelles.html"><i class="fa-solid fa-road-spikes"></i>Parcelles</a></li>
+
+            <li data-roles="Agriculteur"><a href="exploitation.html"><i class="fa-solid fa-tractor"></i>Exploitation</a></li>
+
+            <li><a href="cultures.html"><i class="fa-solid fa-seedling"></i>Cultures</a></li>
+            <li><a href="intrants.html"><i class="fa-solid fa-dumpster"></i>Intrants</a></li>
+            <li><a href="saisons.html"><i class="fa-solid fa-wind"></i>Saisons</a></li>
+            <li><a href="zones.html"><i class="fa-solid fa-location-dot"></i>Zones Agroécologiques</a></li>
+            <li><a href="cooperatives.html"><i class="fa-solid fa-globe"></i>Coopératives</a></li>
+
+            <li data-roles="Administrateur"><a href="utilisateurs.html"><i class="fa-solid fa-users"></i>Utilisateurs</a></li>
+            <li data-roles="Responsable"><a href="rapport.html"><i class="fa-solid fa-book"></i>Rapports</a></li>
+          </ul>
+          <ul>
+            <li class="para"><a href="#" onclick="Api.logout(); return false;"><i class="fa-solid fa-right-from-bracket"></i>Déconnexion</a></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+    <div class="sidebar-backdrop"></div>
+    <div class="topbar">
+      <div class="icon">
+        <i class="fa-solid fa-bars-staggered" id="menuToggle"></i>
+        <i class="fa-solid fa-bell" id="bells"></i>
+      </div>
+      <div class="profil" id="profilBadge" title=""></div>
+    </div>
+    <section class="page" id="ajout-utilisateur">
+      <div class="page-head">
+        <div>
+          <div class="eyebrow">Utilisateurs · Nouveau</div>
+          <h2>Ajouter un utilisateur</h2>
+          <p>Créez un nouveau compte d'accès à la plateforme et définissez son rôle.</p>
+        </div>
+        
+      </div>
+
+      <div class="form-wrap">
+        <div class="cardy form-card">
+          <form id="addForm">
+            <div class="form-section-title">Compte</div>
+            <div class="form-grid">
+              <div class="field"><label>Nom</label><input type="text" id="Nom" required placeholder="Ex : Amouzou" /></div>
+              <div class="field"><label>Prénom</label><input type="text" id="Prenom" required placeholder="Ex : Serge" /></div>
+              <div class="field"><label>Téléphone</label><input type="tel" id="Tel" placeholder="+228 90 12 34 56" /></div>
+              <div class="field"><label>Email</label><input type="email" id="Email" required placeholder="nom@agritogo.tg" /></div>
+              <div class="field"><label>Mot de passe</label><input type="password" id="MotPasse" required placeholder="••••••••" /></div>
+              <div class="field">
+                <label>Rôle</label>
+                <select id="Role" required onchange="onRoleChange()">
+                  <option value="Administrateur">Administrateur</option>
+                  <option value="Agriculteur">Agriculteur</option>
+                  <option value="Responsable">Responsable de coopérative</option>
+                </select>
+              </div>
+              <div class="field span-2" id="champCoop">
+                <label>Coopérative</label>
+                <select id="IdCoop">
+                  <option value="">— Aucune —</option>
+                </select>
+                <span class="hint" id="hintCoop"></span>
+              </div>
+            </div>
+
+            <div id="blocAgriculteur" hidden>
+              <div class="form-section-title">Fiche agriculteur associée</div>
+              <div class="form-grid">
+                <div class="field"><label>Nom (agriculteur)</label><input type="text" id="Nom" placeholder="Ex : Kponou" /></div>
+                <div class="field"><label>Prénom (agriculteur)</label><input type="text" id="Prenom" placeholder="Ex : Ayélé" /></div>
+                <div class="field span-2">
+                  <label>Sexe</label>
+                  <div class="radio-group">
+                    <label class="radio-pill checked"><input type="radio" name="sexe" value="F" checked /> Féminin</label>
+                    <label class="radio-pill"><input type="radio" name="sexe" value="M" /> Masculin</label>
+                  </div>
+                </div>
+                <div class="field"><label>Date de naissance</label><input type="date" id="DateNaissance" /></div>
+                <div class="field"><label>Adresse</label><input type="text" id="Adresse" placeholder="Quartier, ville, préfecture" /></div>
+              </div>
+            </div>
+
+            <div id="form-error" class="auth-error" hidden style="margin:0 24px 16px;"></div>
+            <div class="form-actions">
+              <a href="utilisateurs.html" class="btn btn-ghost">Annuler</a>
+              <button type="submit" class="btn btn-primary">Enregistrer</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <script>
+      const currentUser = Api.requireAuth(["Administrateur"]);
+
+      function onRoleChange() {
+        const role = document.getElementById("Role").value;
+        const blocAgri = document.getElementById("blocAgriculteur");
+        const coopField = document.getElementById("IdCoop");
+        const hint = document.getElementById("hintCoop");
+        blocAgri.hidden = role !== "Agriculteur";
+        // Un Agriculteur et un Responsable sont rattachés à une coopérative ; un Administrateur non.
+        if (role === "Administrateur") {
+          coopField.removeAttribute("required");
+          hint.textContent = "Non requis pour un Administrateur.";
+        } else {
+          coopField.setAttribute("required", "required");
+          hint.textContent = "Requis pour ce rôle.";
+        }
+      }
+
+      async function chargerCooperatives() {
+        try {
+          const coops = await Api.get("/cooperatives");
+          const select = document.getElementById("IdCoop");
+          coops.forEach(function (c) {
+            const opt = document.createElement("option");
+            opt.value = c.IdCoop;
+            opt.textContent = c.NomCoop;
+            select.appendChild(opt);
+          });
+        } catch (err) { /* silencieux */ }
+      }
+      chargerCooperatives();
+      onRoleChange();
+
+      document.getElementById("addForm").addEventListener("submit", async function (e) {
+        e.preventDefault();
+        const errorBox = document.getElementById("form-error");
+        errorBox.hidden = true;
+
+        const role = document.getElementById("Role").value;
+        const idCoop = document.getElementById("IdCoop").value || null;
+
+        if (role !== "Administrateur" && !idCoop) {
+          errorBox.textContent = "Veuillez sélectionner une coopérative pour ce rôle.";
+          errorBox.hidden = false;
+          return;
+        }
+
+        const payloadUser = {
+          Nom: document.getElementById("Nom").value,
+          Prenom: document.getElementById("Prenom").value,
+          Tel: document.getElementById("Tel").value || null,
+          Email: document.getElementById("Email").value,
+          MotPasse: document.getElementById("MotPasse").value,
+          Role: role,
+          IdCoop: idCoop,
+        };
+
+        try {
+          const nouvelUtilisateur = await Api.post("/utilisateurs", payloadUser);
+          window.location.href = "utilisateurs.html";
+        } catch (err) {
+          errorBox.textContent = err.message;
+          errorBox.hidden = false;
+        }
+      });
+    </script>
+    <script src="../assets/js/app.js"></script>
+  </body>
+</html>

@@ -6,6 +6,7 @@ class Utilisateur extends Model
 {
     protected static string $table = 'utilisateur';
     protected static string $primaryKey = 'IdUtil';
+    protected static ?string $prefix = 'USR';
 
     public static function findByEmail(string $email): ?array
     {
@@ -21,7 +22,7 @@ class Utilisateur extends Model
      * Responsable ou Agriculteur), heritage IdUtil = PK et FK.
      * Retourne ['role' => ..., 'coop' => int|null] ou null si aucun role.
      */
-    public static function determineRole(int $idUtil): ?array
+    public static function determineRole(string $idUtil): ?array
     {
         if (Administrateur::find($idUtil)) {
             return ['role' => 'Administrateur', 'coop' => null];
@@ -31,7 +32,7 @@ class Utilisateur extends Model
         if ($responsable) {
             return [
                 'role' => 'Responsable',
-                'coop' => $responsable['IdCoop'] !== null ? (int) $responsable['IdCoop'] : null,
+                'coop' => $responsable['IdCoop'],
             ];
         }
 
@@ -39,7 +40,7 @@ class Utilisateur extends Model
         if ($agriculteur) {
             return [
                 'role' => 'Agriculteur',
-                'coop' => $agriculteur['IdCoop'] !== null ? (int) $agriculteur['IdCoop'] : null,
+                'coop' => $agriculteur['IdCoop'],
             ];
         }
 
@@ -49,7 +50,7 @@ class Utilisateur extends Model
     /**
      * Attache une specialisation (role) a un compte utilisateur existant.
      */
-    public static function attachRole(int $idUtil, string $role, ?int $idCoop = null): void
+    public static function attachRole(string $idUtil, string $role, ?string $idCoop = null): void
     {
         switch ($role) {
             case 'Administrateur':
@@ -68,7 +69,7 @@ class Utilisateur extends Model
      * Retire la specialisation (role) d'un compte utilisateur, utile
      * lors d'un changement de role ou d'une suppression de compte.
      */
-    public static function detachRole(int $idUtil, string $role): void
+    public static function detachRole(string $idUtil, string $role): void
     {
         switch ($role) {
             case 'Administrateur':

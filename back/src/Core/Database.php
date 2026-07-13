@@ -19,14 +19,36 @@ class Database
                 $config['port'],
                 $config['name']
             );
-            try {
-                self::$instance = new PDO($dsn, $config['user'], $config['pass'], [
-                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-                    PDO::ATTR_EMULATE_PREPARES => false,
-                ]);
-            } catch (PDOException $e) {
-                Response::json(['error' => 'Connexion base de donnees impossible'], 500);
+            $attempts = 0;
+            $lastError = null;
+            while ($attempts < 2 && self::$instance === null) {
+                $attempts++;
+                try {
+                    self::$instance = new PDO($dsn, $config['user'], $config['pass'], [
+                        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                        PDO::ATTR_EMULATE_PREPARES => false,
+                    ]);
+                } catch (PDOException $e) {
+                    $lastError = $e;
+                    // Sur un hebergement mutualise, un "too many connections"
+                    // est souvent transitoire (pic de requetes simultanees) :
+                    // on retente une fois apres une courte pause avant d'abandonner.
+                    if ($attempts < 2) {
+                        usleep(150000); // 150ms
+                    }
+                }
+            }
+            if (self::$instance === null) {
+                // On journalise le vrai message cote serveur (utile pour distinguer
+                // "mauvais identifiants", "hote injoignable" et "trop de connexions"),
+                // sans exposer ce detail au client en production.
+                error_log('[AgriGestion] Connexion base de donnees echouee: ' . $lastError->getMessage());
+                $payload = ['error' => 'Connexion base de donnees impossible'];
+                if (env('APP_ENV', 'local') === 'local') {
+                    $payload['detail'] = $lastError->getMessage();
+                }
+                Response::json($payload, 500);
                 exit;
             }
         }

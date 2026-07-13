@@ -48,13 +48,13 @@ class RapportController
         Response::json(Agriculteur::byCooperative($idCoop));
     }
 
-    private static function currentCoop(Request $request): ?int
+    private static function currentCoop(Request $request): ?string
     {
         $idCoop = $request->user['coop'] ?? null;
         if ($idCoop === null) {
             Response::error('Ce compte n\'est rattache a aucune cooperative', 422);
             return null;
         }
-        return (int) $idCoop;
+        return $idCoop;
     }
 }
